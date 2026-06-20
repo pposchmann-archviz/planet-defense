@@ -6,6 +6,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
   schwarm: { id: 'schwarm', nameDe: 'Schwarm', baseHp: 12, speed: 0.08, armor: 'light', planetDamage: 1, reward: 1, shape: 'cluster', colorVar: '#B5E853' },
   brocken: { id: 'brocken', nameDe: 'Brocken', baseHp: 320, speed: 0.035, armor: 'heavy', planetDamage: 3, reward: 14, shape: 'hexagon', colorVar: '#7A8AB0' },
   schild_drohne: { id: 'schild_drohne', nameDe: 'Schild-Drohne', baseHp: 80, speed: 0.05, armor: 'shield', planetDamage: 2, reward: 6, shape: 'circle', colorVar: '#5AB0FF' },
+  drohne_flug: { id: 'drohne_flug', nameDe: 'Flugdrohne', baseHp: 40, speed: 0.07, armor: 'light', planetDamage: 2, reward: 5, shape: 'triangle', colorVar: '#B48CFF', flying: true },
   // Endboss (Runde 10). Schild-Phase wird im bossSystem behandelt.
   zitadelle: {
     id: 'zitadelle', nameDe: 'Zitadelle', baseHp: 600, speed: 0.03, armor: 'heavy',
@@ -28,8 +29,8 @@ export const TERRA1_WAVES: WaveSpawn[][] = [
   /* R4 */ [{ enemyId: 'laeufer', count: 6, spacingS: 0.7, startDelayS: 0 }, { enemyId: 'schwarm', count: 6, spacingS: 0.3, startDelayS: 4 }],
   /* R5 */ [{ enemyId: 'laeufer', count: 8, spacingS: 0.6, startDelayS: 0 }, { enemyId: 'brocken', count: 1, spacingS: 1, startDelayS: 6 }],
   /* R6 */ [{ enemyId: 'schwarm', count: 10, spacingS: 0.25, startDelayS: 0 }, { enemyId: 'laeufer', count: 4, spacingS: 0.6, startDelayS: 4 }, { enemyId: 'schild_drohne', count: 2, spacingS: 1, startDelayS: 6 }],
-  /* R7 */ [{ enemyId: 'brocken', count: 2, spacingS: 1.5, startDelayS: 0 }, { enemyId: 'laeufer', count: 4, spacingS: 0.6, startDelayS: 3 }],
+  /* R7 */ [{ enemyId: 'brocken', count: 2, spacingS: 1.5, startDelayS: 0 }, { enemyId: 'laeufer', count: 4, spacingS: 0.6, startDelayS: 3 }, { enemyId: 'drohne_flug', count: 2, spacingS: 1, startDelayS: 5 }],
   /* R8 */ [{ enemyId: 'brocken', count: 2, spacingS: 1.5, startDelayS: 0 }, { enemyId: 'schwarm', count: 6, spacingS: 0.25, startDelayS: 4 }, { enemyId: 'schild_drohne', count: 2, spacingS: 1, startDelayS: 7 }],
-  /* R9 */ [{ enemyId: 'laeufer', count: 6, spacingS: 0.6, startDelayS: 0 }, { enemyId: 'schwarm', count: 6, spacingS: 0.25, startDelayS: 3 }, { enemyId: 'brocken', count: 2, spacingS: 1.5, startDelayS: 6 }, { enemyId: 'schild_drohne', count: 3, spacingS: 1, startDelayS: 8 }],
+  /* R9 */ [{ enemyId: 'laeufer', count: 6, spacingS: 0.6, startDelayS: 0 }, { enemyId: 'schwarm', count: 6, spacingS: 0.25, startDelayS: 3 }, { enemyId: 'brocken', count: 2, spacingS: 1.5, startDelayS: 6 }, { enemyId: 'schild_drohne', count: 3, spacingS: 1, startDelayS: 8 }, { enemyId: 'drohne_flug', count: 3, spacingS: 0.8, startDelayS: 5 }],
   /* R10 */ [{ enemyId: 'laeufer', count: 4, spacingS: 0.8, startDelayS: 0 }, { enemyId: 'zitadelle', count: 1, spacingS: 1, startDelayS: 3 }],
 ];

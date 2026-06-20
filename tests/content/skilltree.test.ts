@@ -4,9 +4,9 @@ import { getSkillNode, SKILL_NODE_IDS } from '../../src/content/skilltree';
 const M4_PASSIVE_IDS = ['p_erzrate', 'p_planethp', 'p_starterz', 'p_stromcap', 'p_turmschaden'];
 
 describe('Skilltree-Content (M4 Passive)', () => {
-  it('hat genau die 7 Knoten (5 M4-Passive + 2 M5-Unlocks)', () => {
+  it('hat genau die 10 Knoten (5 M4-Passive + 2 M5-Unlocks + 3 M6-Unlocks)', () => {
     expect(SKILL_NODE_IDS.sort()).toEqual(
-      ['p_erzrate', 'p_planethp', 'p_starterz', 'p_stromcap', 'p_turmschaden', 'u_artillerie', 'u_laser'],
+      ['p_erzrate', 'p_planethp', 'p_starterz', 'p_stromcap', 'p_turmschaden', 'u_artillerie', 'u_flak', 'u_frost', 'u_laser', 'u_railgun'],
     );
   });
   it('enthält die 5 M4-Passiv-Knoten als Teilmenge', () => {
@@ -36,5 +36,20 @@ describe('Unlock-Knoten (M5)', () => {
     expect(a.typ).toBe('unlock');
     expect(a.unlocks?.gebaeudeId).toBe('artillery');
     expect(getSkillNode('u_laser').unlocks?.gebaeudeId).toBe('laser');
+  });
+});
+
+describe('Unlock-Knoten (M6)', () => {
+  it('u_railgun / u_frost / u_flak sind Unlock-Knoten mit gebaeudeId', () => {
+    const r = getSkillNode('u_railgun');
+    expect(r.typ).toBe('unlock');
+    expect(r.maxStufe).toBe(1);
+    expect(r.unlocks?.gebaeudeId).toBe('railgun');
+    const f = getSkillNode('u_frost');
+    expect(f.typ).toBe('unlock');
+    expect(f.unlocks?.gebaeudeId).toBe('frost');
+    const k = getSkillNode('u_flak');
+    expect(k.typ).toBe('unlock');
+    expect(k.unlocks?.gebaeudeId).toBe('flak');
   });
 });

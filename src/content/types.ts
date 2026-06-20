@@ -1,8 +1,8 @@
-export type BuildingId = 'kraftwerk' | 'erz_sammler' | 'geschuetz' | 'artillery' | 'laser';
+export type BuildingId = 'kraftwerk' | 'erz_sammler' | 'geschuetz' | 'artillery' | 'laser' | 'railgun' | 'frost' | 'flak';
 export type BuildingCategory = 'eco' | 'weapon';
 export type DamageType = 'kinetic' | 'explosive' | 'energy';
 export type ArmorType = 'light' | 'heavy' | 'shield';
-export type EnemyId = 'laeufer' | 'schwarm' | 'brocken' | 'zitadelle' | 'schild_drohne';
+export type EnemyId = 'laeufer' | 'schwarm' | 'brocken' | 'zitadelle' | 'schild_drohne' | 'drohne_flug';
 
 export interface BuildingBase {
   id: BuildingId;
@@ -39,10 +39,11 @@ export interface EnemyDef {
   armor: ArmorType;
   planetDamage: number;
   reward: number; // In-Run-Erz pro Kill
-  shape: 'circle' | 'cluster' | 'hexagon';
+  shape: 'circle' | 'cluster' | 'hexagon' | 'triangle';
   colorVar: string;
   isBoss?: boolean;        // true nur für Boss-Gegner
   bossHp?: number;         // optionaler Override; sonst baseHp * bossHpMult genutzt
+  flying?: boolean;        // M6: nur von Flak (canHitAir) treffbar
 }
 
 export interface WaveSpawn {

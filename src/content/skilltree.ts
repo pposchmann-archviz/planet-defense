@@ -24,6 +24,9 @@ export const SKILL_NODES: Record<string, SkillNode> = {
   p_starterz: { id: 'p_starterz', branch: 'survival', typ: 'passiv', nameDe: 'Vorrats-Depot', beschreibung: 'Mehr Start-Erz.', kostenTp: 4, maxStufe: 3, effekt: { stat: 'startErz', stufe1: 50, folge: 50, modus: 'flat' } },
   u_artillerie: { id: 'u_artillerie', branch: 'defense', typ: 'unlock', nameDe: 'Artilleriegeschütz', beschreibung: 'Schaltet das Artilleriegeschütz frei (Flächenschaden).', kostenTp: 14, maxStufe: 1, unlocks: { gebaeudeId: 'artillery' } },
   u_laser: { id: 'u_laser', branch: 'defense', typ: 'unlock', nameDe: 'Laser-Emitter', beschreibung: 'Schaltet den Laser-Emitter frei (stark gegen Schilde).', kostenTp: 12, maxStufe: 1, unlocks: { gebaeudeId: 'laser' } },
+  u_railgun: { id: 'u_railgun', branch: 'defense', typ: 'unlock', nameDe: 'Railgun', beschreibung: 'Schaltet die Railgun frei (hoher Single-Target-Schaden).', kostenTp: 18, maxStufe: 1, unlocks: { gebaeudeId: 'railgun' } },
+  u_frost: { id: 'u_frost', branch: 'defense', typ: 'unlock', nameDe: 'Frostturm', beschreibung: 'Schaltet den Frostturm frei (verlangsamt Gegner).', kostenTp: 12, maxStufe: 1, unlocks: { gebaeudeId: 'frost' } },
+  u_flak: { id: 'u_flak', branch: 'defense', typ: 'unlock', nameDe: 'Flak-Geschütz', beschreibung: 'Schaltet Flak frei (trifft fliegende Gegner).', kostenTp: 14, maxStufe: 1, unlocks: { gebaeudeId: 'flak' } },
 };
 
 export const SKILL_NODE_IDS: string[] = Object.keys(SKILL_NODES);

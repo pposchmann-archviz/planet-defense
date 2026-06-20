@@ -4,8 +4,8 @@ import { DAMAGE_MATRIX } from '../../src/content/damageMatrix';
 import { getBuilding } from '../../src/content/buildings';
 
 describe('Gegner-Content', () => {
-  it('hat die M2-Gegner (plus M3-Boss + M5-Schild-Drohne)', () => {
-    expect(Object.keys(ENEMIES).sort()).toEqual(['brocken', 'laeufer', 'schild_drohne', 'schwarm', 'zitadelle']);
+  it('hat die M2-Gegner (plus M3-Boss + M5-Schild-Drohne + M6-Flugdrohne)', () => {
+    expect(Object.keys(ENEMIES).sort()).toEqual(['brocken', 'drohne_flug', 'laeufer', 'schild_drohne', 'schwarm', 'zitadelle']);
   });
   it('Brocken ist heavy und zäh, Läufer light', () => {
     expect(getEnemy('brocken').armor).toBe('heavy');
@@ -77,5 +77,29 @@ describe('M5-Waffen (Artillerie + Laser)', () => {
     const las = getBuilding('laser');
     if (las.category !== 'weapon') throw new Error('laser ist weapon');
     expect(las.projectileSpeed).toBeUndefined();
+  });
+});
+
+describe('Flug-Gegner', () => {
+  it('drohne_flug ist flying', () => {
+    expect(getEnemy('drohne_flug').flying).toBe(true);
+  });
+  it('erscheint in mittleren/späten Terra-1-Runden (R7 + R9)', () => {
+    expect(TERRA1_WAVES[6].some((g) => g.enemyId === 'drohne_flug')).toBe(true);
+    expect(TERRA1_WAVES[8].some((g) => g.enemyId === 'drohne_flug')).toBe(true);
+  });
+});
+
+describe('M6-Waffen (Railgun + Frost + Flak)', () => {
+  it('Frost verlangsamt, Flak trifft Luft, Railgun macht hohen Schaden', () => {
+    const frost = getBuilding('frost');
+    if (frost.category !== 'weapon') throw new Error('frost ist weapon');
+    expect(frost.slowMult!).toBeGreaterThan(0);
+    const flak = getBuilding('flak');
+    if (flak.category !== 'weapon') throw new Error('flak ist weapon');
+    expect(flak.canHitAir).toBe(true);
+    const railgun = getBuilding('railgun');
+    if (railgun.category !== 'weapon') throw new Error('railgun ist weapon');
+    expect(railgun.baseDamage).toBeGreaterThanOrEqual(30);
   });
 });

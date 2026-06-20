@@ -27,10 +27,30 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     damageType: 'energy', baseDamage: 9, fireRate: 1.5, range: 200,
     unlockNode: 'u_laser', // projectileSpeed undefined = Hitscan
   },
+  railgun: {
+    id: 'railgun', nameDe: 'Railgun', category: 'weapon',
+    baseCost: 200, powerGen: 0, powerCost: 16, maxLevel: 8,
+    damageType: 'kinetic', baseDamage: 40, fireRate: 0.8, range: 280,
+    unlockNode: 'u_railgun', // projectileSpeed undefined = Hitscan (Burst)
+  },
+  frost: {
+    id: 'frost', nameDe: 'Frostturm', category: 'weapon',
+    baseCost: 120, powerGen: 0, powerCost: 10, maxLevel: 8,
+    damageType: 'energy', baseDamage: 4, fireRate: 1.5, range: 200,
+    slowMult: 0.5, slowDurationS: 2,
+    unlockNode: 'u_frost',
+  },
+  flak: {
+    id: 'flak', nameDe: 'Flak-Geschütz', category: 'weapon',
+    baseCost: 160, powerGen: 0, powerCost: 12, maxLevel: 8,
+    damageType: 'explosive', baseDamage: 10, fireRate: 1.2, range: 240,
+    canHitAir: true,
+    unlockNode: 'u_flak',
+  },
 };
 
 export const ECO_BUILDING_IDS: BuildingId[] = ['kraftwerk', 'erz_sammler'];
-export const WEAPON_BUILDING_IDS: BuildingId[] = ['geschuetz', 'artillery', 'laser'];
+export const WEAPON_BUILDING_IDS: BuildingId[] = ['geschuetz', 'artillery', 'laser', 'railgun', 'frost', 'flak'];
 export const BUILDABLE_IDS: BuildingId[] = [...ECO_BUILDING_IDS, ...WEAPON_BUILDING_IDS];
 
 export function getBuilding(id: string): BuildingDef {
