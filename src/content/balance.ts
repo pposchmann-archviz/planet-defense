@@ -20,7 +20,6 @@ export const BALANCE = {
 
   // --- Planet ---
   planetHpBase: 120,
-  planetRadiusSim: 60,
 
   // --- Fokus-Mark ---
   focusDurationS: 3,

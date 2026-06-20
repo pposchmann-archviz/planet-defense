@@ -1,40 +1,43 @@
 import { createRng, type RngState } from './rng';
 import { BALANCE } from '../../content/balance';
-import type { BuildingId } from '../../content/types';
+import type { BuildingId, EnemyId } from '../../content/types';
 
 export type RunPhase = 'BUILD' | 'COMBAT' | 'RUN_OVER' | 'RUN_WON';
 
-export interface PlanetState {
-  x: number;
-  y: number;
-  hp: number;
-  maxHp: number;
-  radius: number;
-}
+export interface PlanetState { x: number; y: number; hp: number; maxHp: number; radius: number; }
 
 export interface BuildingInstance {
-  iid: number; // eindeutige Instanz-id (deterministisch hochgezählt)
+  iid: number;
   defId: BuildingId;
-  level: number; // 1-basiert
+  level: number;
+  slot?: number;     // nur weapon: Ring-Platz
+  cooldown?: number; // nur weapon: Sekunden bis nächster Schuss
 }
 
-export interface PowerState {
-  gen: number;
-  draw: number;
-  coverage: number; // 0..1, abgeleitet
+export interface Enemy {
+  eid: number;
+  defId: EnemyId;
+  hp: number;
+  maxHp: number;
+  angle: number;     // Spawn-Winkel (radians)
+  progress: number;  // 0..1
+  alive: boolean;
 }
 
-export interface EcoMetaMods {
-  oreMult: number; // default 1.0
-  powerGenMult: number; // default 1.0
-  startOreBonus: number; // default 0
+export interface PowerState { gen: number; draw: number; coverage: number; }
+export interface EcoMetaMods { oreMult: number; powerGenMult: number; startOreBonus: number; }
+
+export interface WaveState {
+  active: boolean;
+  elapsedS: number;     // Zeit seit Wellenstart
+  spawnedPerGroup: number[]; // wie viele jeder M2_WAVE-Gruppe schon gespawnt sind
 }
 
 export interface GameState {
   seed: number;
   rng: RngState;
   phase: RunPhase;
-  tick: number; // Anzahl Eco-Steps
+  tick: number;
   timeS: number;
   ore: number;
   oreStorageCap: number;
@@ -43,6 +46,13 @@ export interface GameState {
   nextIid: number;
   meta: EcoMetaMods;
   planet: PlanetState;
+  // Combat:
+  enemies: Enemy[];
+  nextEid: number;
+  wave: WaveState;
+  focusEid: number | null;  // markiertes Ziel
+  focusTimerS: number;      // verbleibende Fokus-Zeit
+  focusUsed: boolean;       // 1×/Welle
 }
 
 export function createInitialState(seed: number): GameState {
@@ -59,6 +69,12 @@ export function createInitialState(seed: number): GameState {
     buildings: [],
     nextIid: 1,
     meta,
-    planet: { x: 0, y: 0, hp: 120, maxHp: 120, radius: 60 },
+    planet: { x: 0, y: 0, hp: BALANCE.planetHpBase, maxHp: BALANCE.planetHpBase, radius: BALANCE.R_PLANET },
+    enemies: [],
+    nextEid: 1,
+    wave: { active: false, elapsedS: 0, spawnedPerGroup: [] },
+    focusEid: null,
+    focusTimerS: 0,
+    focusUsed: false,
   };
 }
