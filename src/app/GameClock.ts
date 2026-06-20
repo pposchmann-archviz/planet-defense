@@ -35,6 +35,7 @@ export class GameClock {
     this.last = performance.now();
     this.lastSnap = this.last;
     gameStore.push(this.state);
+    this.renderer.draw(this.state); // sofort einen Frame zeichnen (kein Blank-Flash bis zum ersten rAF)
     this.raf = requestAnimationFrame(this.frame);
   }
 
