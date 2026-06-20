@@ -21,7 +21,7 @@ function emptySnapshot(): UiSnapshot {
   };
 }
 
-// Svelte-5-Runes-Store: ein $state-Container, den die GameClock per pushSnapshot füttert.
+// Svelte-5-Runes-Store: ein $state-Container, den die GameClock per push füttert.
 class GameStore {
   snapshot = $state<UiSnapshot>(emptySnapshot());
 

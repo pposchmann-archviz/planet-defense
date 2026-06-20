@@ -18,4 +18,16 @@ describe('fmt (deutsche Zahlen)', () => {
     expect(fmtInt(6.9)).toBe('6');
     expect(fmtInt(20)).toBe('20');
   });
+  it('Randfälle: Grenze, Abschneiden, Negativ, nicht-endlich', () => {
+    expect(fmt(1000)).toBe('1 Tsd.'); // genau an der Tausender-Grenze
+    expect(fmt(1990)).toBe('1,9 Tsd.'); // abgeschnitten, NICHT gerundet (sonst 2 Tsd.)
+    expect(fmt(-1500)).toBe('-1,5 Tsd.'); // negativ
+    expect(fmt(NaN)).toBe('–'); // nicht-endlich
+    expect(fmt(Infinity)).toBe('–');
+  });
+
+  it('saturiert an der größten Stufe (Bio.) statt aus dem Suffix-Array zu fallen', () => {
+    const s = fmt(1e18);
+    expect(s.endsWith(' Bio.')).toBe(true); // bleibt bei Bio., kein undefined-Suffix
+  });
 });
