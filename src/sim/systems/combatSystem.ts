@@ -54,6 +54,11 @@ export function tickCombatTurrets(state: GameState, dt: number): void {
     } else {
       // Hitscan: Sofort-Treffer (applyDamage kapselt Schild-Skip + Kill/Reward).
       applyDamage(state, target, def.baseDamage, damageType, t.level);
+      // M6: Frost-Treffer verlangsamt das Ziel (kein Splash-Frost in M6).
+      if (def.slowMult !== undefined) {
+        target.slowTimerS = def.slowDurationS ?? 0;
+        target.slowMult = def.slowMult;
+      }
     }
   }
 }

@@ -26,6 +26,9 @@ export interface Enemy {
   isBoss?: boolean;
   bossPhase?: 'vulnerable' | 'telegraph' | 'shield';
   bossPhaseTimerS?: number; // Sekunden bis zum nächsten Phasenwechsel
+  slowTimerS?: number; // M6: verbleibende Slow-Dauer (Frost)
+  slowMult?: number;   // M6: Geschwindigkeits-Multiplikator während Slow
+  flying?: boolean;    // M6: fliegender Gegner (nur von Flak treffbar)
 }
 
 export interface Projectile {

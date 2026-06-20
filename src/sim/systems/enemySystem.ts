@@ -25,6 +25,7 @@ export function spawnDueEnemies(state: GameState): void {
           angle,
           progress: 0,
           alive: true,
+          ...(def.flying ? { flying: true } : {}),
           ...(def.isBoss
             ? { isBoss: true, bossPhase: 'vulnerable' as const, bossPhaseTimerS: BALANCE.bossShieldIntervalS }
             : {}),
@@ -42,7 +43,10 @@ export function moveEnemies(state: GameState, dt: number): void {
   for (const e of state.enemies) {
     if (!e.alive) continue;
     const def = getEnemy(e.defId);
-    e.progress += def.speed * dt;
+    const slowed = (e.slowTimerS ?? 0) > 0;
+    const eff = def.speed * (slowed ? (e.slowMult ?? 1) : 1);
+    e.progress += eff * dt;
+    if (slowed) e.slowTimerS = (e.slowTimerS ?? 0) - dt;
     if (e.progress >= 1) {
       state.planet.hp = Math.max(0, state.planet.hp - def.planetDamage);
       e.alive = false;

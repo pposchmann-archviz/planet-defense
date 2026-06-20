@@ -93,6 +93,17 @@ describe('Laser (Hitscan, energy) trifft sofort', () => {
   });
 });
 
+describe('Frost-Turm verlangsamt das Ziel', () => {
+  it('Frost trifft Läufer und setzt Slow', () => {
+    const s = combatState();
+    s.buildings.push({ iid: s.nextIid++, defId: 'frost', level: 1, slot: 0, cooldown: 0 });
+    s.enemies.push({ eid: 1, defId: 'laeufer', hp: 50, maxHp: 50, angle: 0, progress: 0.95, alive: true });
+    tickCombatTurrets(s, 1 / 30);
+    expect(s.enemies[0].slowTimerS).toBeGreaterThan(0);
+    expect(s.enemies[0].slowMult).toBe(0.5);
+  });
+});
+
 describe('tickCombatTurrets: Boss-Schild', () => {
   it('Schaden wird ignoriert während der Schild-Phase', () => {
     const s = combatState();

@@ -39,6 +39,14 @@ describe('spawnDueEnemies', () => {
     const total = TERRA1_WAVES[0].reduce((n, g) => n + g.count, 0);
     expect(s.enemies.length).toBe(total);
   });
+  it('gespawnte Flugdrohne hat flying===true (Flag aus EnemyDef übernommen)', () => {
+    const s = startedWave(7); // R7 enthält drohne_flug
+    s.wave.elapsedS = 1000; // nach allen dueAt-Zeiten → alle Gruppen gespawnt
+    spawnDueEnemies(s);
+    const drohne = s.enemies.find((e) => e.defId === 'drohne_flug');
+    expect(drohne).toBeDefined();
+    expect(drohne!.flying).toBe(true);
+  });
 });
 
 describe('Runden-Skalierung', () => {
