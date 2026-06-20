@@ -28,6 +28,18 @@ export interface Enemy {
   bossPhaseTimerS?: number; // Sekunden bis zum nächsten Phasenwechsel
 }
 
+export interface Projectile {
+  pid: number;
+  x: number; y: number;      // aktuelle Position (Sim-Koordinaten)
+  tx: number; ty: number;    // Zielpunkt (fix bei Spawn)
+  speed: number;             // Sim-Einheiten/s
+  damage: number;            // baseDamage (vor Matrix/Level/Meta? — siehe Combat-Task)
+  damageType: import('../../content/types').DamageType;
+  level: number;             // Turm-Level (für levelMult bei Einschlag)
+  splashRadius: number;
+  alive: boolean;
+}
+
 export interface PowerState { gen: number; draw: number; coverage: number; }
 // Single source of truth: EcoMetaMods == RunMods (meta.ts). meta.ts importiert GameState NICHT → kein Zyklus.
 export type EcoMetaMods = RunMods;
@@ -61,9 +73,13 @@ export interface GameState {
   currentRound: number;        // 1-basiert
   highestRoundCleared: number;
   bossesKilledThisRun: number;
+  // Projektile:
+  projectiles: Projectile[];
+  nextPid: number;
+  unlockedBuildings: string[];
 }
 
-export function createInitialState(seed: number, mods?: Partial<EcoMetaMods>): GameState {
+export function createInitialState(seed: number, mods?: Partial<EcoMetaMods>, unlocks?: string[]): GameState {
   const meta: EcoMetaMods = {
     oreMult: mods?.oreMult ?? 1,
     powerGenMult: mods?.powerGenMult ?? 1,
@@ -94,5 +110,8 @@ export function createInitialState(seed: number, mods?: Partial<EcoMetaMods>): G
     currentRound: 1,
     highestRoundCleared: 0,
     bossesKilledThisRun: 0,
+    projectiles: [],
+    nextPid: 1,
+    unlockedBuildings: unlocks ?? ['kraftwerk', 'erz_sammler', 'geschuetz'],
   };
 }
