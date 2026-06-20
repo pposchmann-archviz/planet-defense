@@ -3,6 +3,7 @@ import { getBuilding } from '../content/buildings';
 import { getEnemy } from '../content/enemies';
 import { BALANCE } from '../content/balance';
 import { pathPosition, towerPosition } from '../sim/core/geometry';
+import { viewScale } from './viewport';
 
 const PALETTE = {
   bgDeep: '#0B1026', planet: '#4DD0C2', planetGlow: '#7FFFE6',
@@ -18,15 +19,10 @@ export class Canvas2DRenderer {
     this.ctx = ctx;
   }
 
-  // Sim-Einheiten → Canvas: Planet in der Mitte, Skala so dass R_SPAWN knapp in die Höhe passt.
-  private scale(): number {
-    return Math.min(this.canvas.width, this.canvas.height) / (BALANCE.R_TOWERS * 2.6);
-  }
-
   draw(state: GameState): void {
     const { ctx, canvas } = this;
     const cx = canvas.width / 2, cy = canvas.height / 2;
-    const s = this.scale();
+    const s = viewScale(canvas.width, canvas.height);
     const toX = (x: number) => cx + x * s;
     const toY = (y: number) => cy + y * s;
 
