@@ -6,7 +6,6 @@
   import { readSave } from './persistence/storage';
   import { gameStore } from './ui/stores/gameStore.svelte';
   import { pathPosition } from './sim/core/geometry';
-  import { BALANCE } from './content/balance';
   import { viewScale } from './render/viewport';
   import type { UICommand } from './sim/commands/command';
   import ResourceBar from './ui/panels/ResourceBar.svelte';
