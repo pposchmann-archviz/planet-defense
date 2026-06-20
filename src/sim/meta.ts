@@ -46,6 +46,17 @@ export function deriveMetaMods(skillNodes: Record<string, number>): RunMods {
   return mods;
 }
 
+// Gekaufte Unlock-Knoten -> Liste freigeschalteter Gebäude-IDs.
+export function deriveUnlocks(skillNodes: Record<string, number>): string[] {
+  const out: string[] = [];
+  for (const [id, level] of Object.entries(skillNodes)) {
+    if (level <= 0) continue;
+    const node = SKILL_NODES[id];
+    if (node?.typ === 'unlock' && node.unlocks?.gebaeudeId) out.push(node.unlocks.gebaeudeId);
+  }
+  return out;
+}
+
 export type BuyReason = 'notEnoughTp' | 'maxLevel' | 'unknownNode';
 export interface BuyResult { ok: boolean; reason?: BuyReason; }
 

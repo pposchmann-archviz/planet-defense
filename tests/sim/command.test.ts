@@ -162,3 +162,23 @@ describe('applyCommand: focusMark', () => {
     expect(r.reason).toBe('wrongPhase');
   });
 });
+
+describe('build: Waffen-Unlock-Gate', () => {
+  it('lehnt gesperrte Waffe ab', () => {
+    const s = createInitialState(1); s.ore = 1000;
+    // artillery nicht in unlockedBuildings
+    const r = applyCommand(s, { t: 'build', buildingId: 'artillery' });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toBe('locked');
+  });
+  it('erlaubt freigeschaltete Waffe', () => {
+    const s = createInitialState(1, undefined, ['kraftwerk', 'erz_sammler', 'geschuetz', 'artillery']);
+    s.ore = 1000;
+    const r = applyCommand(s, { t: 'build', buildingId: 'artillery' });
+    expect(r.ok).toBe(true);
+  });
+  it('Basis-Geschütz ist immer baubar', () => {
+    const s = createInitialState(1); s.ore = 1000;
+    expect(applyCommand(s, { t: 'build', buildingId: 'geschuetz' }).ok).toBe(true);
+  });
+});

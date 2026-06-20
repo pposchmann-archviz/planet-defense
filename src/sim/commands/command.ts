@@ -19,6 +19,7 @@ export type CommandReason =
   | 'noSuchBuilding'
   | 'unknownBuilding'
   | 'noSlot'
+  | 'locked'
   | 'focusUsed'
   | 'noSuchEnemy';
 
@@ -38,6 +39,11 @@ export function applyCommand(state: GameState, cmd: UICommand): CommandResult {
       if (state.phase !== 'BUILD') return fail('wrongPhase');
       let def: BuildingDef;
       try { def = getBuilding(cmd.buildingId); } catch { return fail('unknownBuilding'); }
+      // Unlock-Gate: Waffen mit unlockNode müssen freigeschaltet sein.
+      // Basis-Gebäude (unlockNode null/undefined) passieren ungehindert.
+      if (def.category === 'weapon' && def.unlockNode && !state.unlockedBuildings.includes(def.id)) {
+        return fail('locked');
+      }
       const count = state.buildings.filter((b) => b.defId === def.id).length;
       const cost = nextCost(def.baseCost, BALANCE.costGrowth, count);
       if (state.ore < cost) return fail('notEnoughOre');

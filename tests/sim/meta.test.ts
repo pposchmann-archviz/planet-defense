@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { emptyMeta, deriveMetaMods, buyNode, awardTechPoints } from '../../src/sim/meta';
+import { emptyMeta, deriveMetaMods, buyNode, awardTechPoints, deriveUnlocks } from '../../src/sim/meta';
 
 describe('deriveMetaMods', () => {
   it('leere Meta = neutrale Mods', () => {
@@ -39,6 +39,15 @@ describe('buyNode', () => {
     const r = buyNode(meta, 'p_planethp');
     expect(r.ok).toBe(false);
     expect(r.reason).toBe('maxLevel');
+  });
+});
+
+describe('deriveUnlocks', () => {
+  it('leer = nur keine Extra-Unlocks', () => {
+    expect(deriveUnlocks({})).toEqual([]);
+  });
+  it('gekaufter u_laser schaltet laser frei', () => {
+    expect(deriveUnlocks({ u_laser: 1 })).toContain('laser');
   });
 });
 
