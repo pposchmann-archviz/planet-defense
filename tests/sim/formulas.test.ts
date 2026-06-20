@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { nextCost } from '../../src/sim/formulas';
+import { nextCost, enemyHpMul } from '../../src/sim/formulas';
+import { BALANCE } from '../../src/content/balance';
 
 describe('nextCost', () => {
   it('n=0 ist der Basispreis', () => {
@@ -22,5 +23,15 @@ describe('nextCost', () => {
       expect(c).toBeGreaterThanOrEqual(prev);
       prev = c;
     }
+  });
+});
+
+describe('enemyHpMul', () => {
+  it('Runde 1 = x1', () => {
+    expect(enemyHpMul(1)).toBe(1);
+  });
+  it('wächst geometrisch mit enemyHpGrowth', () => {
+    expect(enemyHpMul(2)).toBeCloseTo(BALANCE.enemyHpGrowth, 6);
+    expect(enemyHpMul(3)).toBeCloseTo(BALANCE.enemyHpGrowth ** 2, 6);
   });
 });

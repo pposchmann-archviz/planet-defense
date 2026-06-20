@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { ENEMIES, getEnemy, M2_WAVE } from '../../src/content/enemies';
+import { ENEMIES, getEnemy, M2_WAVE, TERRA1_WAVES } from '../../src/content/enemies';
 import { DAMAGE_MATRIX } from '../../src/content/damageMatrix';
 import { getBuilding } from '../../src/content/buildings';
 
 describe('Gegner-Content', () => {
-  it('hat die drei M2-Gegner', () => {
-    expect(Object.keys(ENEMIES).sort()).toEqual(['brocken', 'laeufer', 'schwarm']);
+  it('hat die drei M2-Gegner (plus M3-Boss)', () => {
+    expect(Object.keys(ENEMIES).sort()).toEqual(['brocken', 'laeufer', 'schwarm', 'zitadelle']);
   });
   it('Brocken ist heavy und zäh, Läufer light', () => {
     expect(getEnemy('brocken').armor).toBe('heavy');
@@ -19,6 +19,31 @@ describe('Gegner-Content', () => {
   it('M2-Welle ist nicht leer und referenziert gültige Gegner', () => {
     expect(M2_WAVE.length).toBeGreaterThan(0);
     for (const s of M2_WAVE) expect(() => getEnemy(s.enemyId)).not.toThrow();
+  });
+});
+
+describe('Terra-1 Runden-Wellen', () => {
+  it('hat genau 10 Runden', () => {
+    expect(TERRA1_WAVES).toHaveLength(10);
+  });
+  it('jede Runde hat mindestens eine Spawn-Gruppe mit gültigen Gegnern', () => {
+    for (const wave of TERRA1_WAVES) {
+      expect(wave.length).toBeGreaterThan(0);
+      for (const g of wave) expect(() => getEnemy(g.enemyId)).not.toThrow();
+    }
+  });
+  it('Runde 10 enthält den Boss Zitadelle', () => {
+    const r10 = TERRA1_WAVES[9];
+    expect(r10.some((g) => g.enemyId === 'zitadelle')).toBe(true);
+  });
+});
+
+describe('Boss Zitadelle', () => {
+  it('ist als Boss markiert mit Schild-Fähigkeit', () => {
+    const z = getEnemy('zitadelle');
+    expect(z.isBoss).toBe(true);
+    expect(z.armor).toBe('heavy');
+    expect(z.baseHp).toBeGreaterThan(0);
   });
 });
 

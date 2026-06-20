@@ -26,4 +26,15 @@ export const BALANCE = {
 
   // --- In-Run-Turm-Level (multiplikativ) ---
   towerLevelDamageMult: 1.25,
+
+  // --- Runden / Eskalation (M3) ---
+  enemyHpGrowth: 1.10,
+  TERRA1_ROUNDS: 10,
+
+  // --- Boss (M3, provisorisch — finales Tuning in M5) ---
+  // Geschütz-schaffbar getunt: bossHpMult moderat, Boss-baseHp in enemies.ts.
+  bossHpMult: 3,
+  bossTelegraphS: 1.5,
+  bossShieldDurationS: 2.0,
+  bossShieldIntervalS: 6.0,
 } as const;

@@ -2,7 +2,7 @@ export type BuildingId = 'kraftwerk' | 'erz_sammler' | 'geschuetz';
 export type BuildingCategory = 'eco' | 'weapon';
 export type DamageType = 'kinetic'; // M2: nur kinetic (explosive/energy ab M3)
 export type ArmorType = 'light' | 'heavy'; // M2: shield ab M3
-export type EnemyId = 'laeufer' | 'schwarm' | 'brocken';
+export type EnemyId = 'laeufer' | 'schwarm' | 'brocken' | 'zitadelle';
 
 export interface BuildingDef {
   id: BuildingId;
@@ -31,6 +31,8 @@ export interface EnemyDef {
   reward: number; // In-Run-Erz pro Kill
   shape: 'circle' | 'cluster' | 'hexagon';
   colorVar: string;
+  isBoss?: boolean;        // true nur für Boss-Gegner
+  bossHp?: number;         // optionaler Override; sonst baseHp * bossHpMult genutzt
 }
 
 export interface WaveSpawn {
