@@ -36,6 +36,8 @@
         {#if def.powerCost > 0}<span class="pwr-minus">−{def.powerCost} Strom</span>{/if}
         {#if def.category === 'eco' && def.producesOrePerTick > 0}<span class="ore">+{def.producesOrePerTick} Erz/s</span>{/if}
         {#if def.category === 'weapon'}<span class="dmg">{def.baseDamage} Schaden · {def.range} Reichw.</span>{/if}
+        {#if def.category === 'weapon' && def.slowMult != null}<span class="hint">Slow</span>{/if}
+        {#if def.category === 'weapon' && def.canHitAir}<span class="hint">Anti-Luft</span>{/if}
       </span>
       {#if locked}
         <span class="cost locked">gesperrt</span>
@@ -71,6 +73,7 @@
   .meta { grid-column: 1 / -1; display: flex; gap: 8px; font-size: 11px; font-weight: 700; }
   .pwr-plus { color: #FFC53D; } .pwr-minus { color: #FFB020; } .ore { color: #4DD0C2; }
   .dmg { color: #FF8A8A; }
+  .hint { color: #5AB0FF; background: #1B2F4A; padding: 0 6px; border-radius: 6px; }
   .cost { align-self: center; font-weight: 800; color: #4DD0C2; font-variant-numeric: tabular-nums; }
   .cost.locked { color: #9AA6D4; }
   .owned { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: #1E2748; border-radius: 8px; }

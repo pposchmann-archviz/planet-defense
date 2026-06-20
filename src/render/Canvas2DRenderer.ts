@@ -9,6 +9,14 @@ const PALETTE = {
   bgDeep: '#0B1026', planet: '#4DD0C2', planetGlow: '#7FFFE6',
   turret: '#9AA6D4', turretCore: '#1E2748', tracer: '#FFE14D',
   hpGood: '#3DDC84', hpBad: '#FF4D5E', focus: '#FFB020',
+  flying: '#CFE8FF', slow: '#5AB0FF',
+};
+
+// Türm-Typ-Farben (minimal): nur abweichende Türme; Rest fällt auf Default zurück.
+const TURRET_COLOR: Record<string, string> = {
+  frost: '#5AB0FF',   // blau
+  flak: '#FF8A3D',    // orange
+  railgun: '#A06BFF', // violett
 };
 
 export class Canvas2DRenderer {
@@ -51,6 +59,16 @@ export class Canvas2DRenderer {
       ctx.fillStyle = def.colorVar;
       const sz = (def.shape === 'cluster' ? 5 : def.shape === 'hexagon' ? 11 : 8);
       ctx.beginPath(); ctx.arc(ex, ey, sz, 0, Math.PI * 2); ctx.fill();
+      // Fliegende Gegner: dünner heller Outline-Ring (lesen als „in der Luft")
+      if (e.flying) {
+        ctx.strokeStyle = PALETTE.flying; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(ex, ey, sz + 3, 0, Math.PI * 2); ctx.stroke();
+      }
+      // Verlangsamte Gegner: hellblauer Ring (#5AB0FF)
+      if ((e.slowTimerS ?? 0) > 0) {
+        ctx.strokeStyle = PALETTE.slow; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(ex, ey, sz + 1.5, 0, Math.PI * 2); ctx.stroke();
+      }
       if (focused) { ctx.strokeStyle = PALETTE.focus; ctx.lineWidth = 2; ctx.stroke(); }
       // Boss-Visual: Telegraph (pulsierender Orange-Ring) / Schild (hellblauer Kreis)
       if (e.isBoss && e.bossPhase === 'telegraph') {
@@ -83,7 +101,7 @@ export class Canvas2DRenderer {
       const txp = toX(tp.x), typ = toY(tp.y);
       // Tracer: kurz nach Schuss (cooldown nahe Maximum) auf nächstes Ziel
       ctx.fillStyle = PALETTE.turretCore;
-      ctx.strokeStyle = PALETTE.turret; ctx.lineWidth = 2;
+      ctx.strokeStyle = TURRET_COLOR[def.id] ?? PALETTE.turret; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(txp, typ, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     }
 
