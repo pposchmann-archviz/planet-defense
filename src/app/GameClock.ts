@@ -14,6 +14,9 @@ export class GameClock {
   private lastSnap = 0;
   private running = false;
   private queue: UICommand[] = [];
+  private endedFired = false;
+  // Feuert EINMALIG beim Übergang nach RUN_WON/RUN_OVER (App vergibt TP + persistiert).
+  onRunEnd?: (state: GameState) => void;
 
   constructor(private state: GameState, private renderer: Canvas2DRenderer) {}
 
@@ -28,6 +31,7 @@ export class GameClock {
 
   start(): void {
     this.running = true;
+    this.endedFired = false;
     this.last = performance.now();
     this.lastSnap = this.last;
     gameStore.push(this.state);
@@ -61,6 +65,13 @@ export class GameClock {
       }
     } else {
       this.accCombat = 0; // außerhalb Combat zurücksetzen
+    }
+
+    // Run-Ende-Übergang einmalig erkennen (nach dem Combat-Tick).
+    if (!this.endedFired && (this.state.phase === 'RUN_WON' || this.state.phase === 'RUN_OVER')) {
+      this.endedFired = true;
+      this.onRunEnd?.(this.state);
+      gameStore.push(this.state);
     }
 
     this.renderer.draw(this.state);
