@@ -68,6 +68,13 @@ export class Canvas2DRenderer {
       }
     }
 
+    // Lebende Projektile (kleine gelbe Kreise)
+    ctx.fillStyle = PALETTE.tracer;
+    for (const p of state.projectiles) {
+      if (!p.alive) continue;
+      ctx.beginPath(); ctx.arc(toX(p.x), toY(p.y), 3, 0, Math.PI * 2); ctx.fill();
+    }
+
     // Türme + Tracer auf das aktuelle Ziel
     for (const t of state.buildings) {
       const def = getBuilding(t.defId);

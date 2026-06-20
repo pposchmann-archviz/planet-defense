@@ -28,15 +28,20 @@
   {#each BUILDABLE_IDS as id (id)}
     {@const def = BUILDINGS[id]}
     {@const cost = buildCost(id)}
-    <button class="build" disabled={snap.ore < cost || snap.phase !== 'BUILD'} onclick={() => onCommand({ t: 'build', buildingId: id })}>
-      <span class="name">{def.nameDe}</span>
+    {@const locked = def.category === 'weapon' && def.unlockNode != null && !snap.unlockedBuildings.includes(def.id)}
+    <button class="build" disabled={locked || snap.ore < cost || snap.phase !== 'BUILD'} onclick={() => onCommand({ t: 'build', buildingId: id })}>
+      <span class="name">{locked ? '🔒 ' : ''}{def.nameDe}</span>
       <span class="meta">
         {#if def.powerGen > 0}<span class="pwr-plus">+{def.powerGen} Strom</span>{/if}
         {#if def.powerCost > 0}<span class="pwr-minus">−{def.powerCost} Strom</span>{/if}
         {#if def.producesOrePerTick > 0}<span class="ore">+{def.producesOrePerTick} Erz/s</span>{/if}
         {#if def.category === 'weapon'}<span class="dmg">{def.baseDamage} Schaden · {def.range} Reichw.</span>{/if}
       </span>
-      <span class="cost">{fmt(cost)} Erz</span>
+      {#if locked}
+        <span class="cost locked">gesperrt</span>
+      {:else}
+        <span class="cost">{fmt(cost)} Erz</span>
+      {/if}
     </button>
   {/each}
 
@@ -67,6 +72,7 @@
   .pwr-plus { color: #FFC53D; } .pwr-minus { color: #FFB020; } .ore { color: #4DD0C2; }
   .dmg { color: #FF8A8A; }
   .cost { align-self: center; font-weight: 800; color: #4DD0C2; font-variant-numeric: tabular-nums; }
+  .cost.locked { color: #9AA6D4; }
   .owned { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: #1E2748; border-radius: 8px; }
   .lvl { color: #7FFFE6; font-size: 12px; }
   .up { padding: 6px 10px; background: #2C3760; border: none; border-radius: 8px; color: #F2F5FF; font-weight: 700; cursor: pointer; font-size: 12px; }

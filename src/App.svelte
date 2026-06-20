@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { createInitialState } from './sim/core/GameState';
+  import { deriveUnlocks } from './sim/meta';
   import { Canvas2DRenderer } from './render/Canvas2DRenderer';
   import { GameClock } from './app/GameClock';
   import { readSave } from './persistence/storage';
@@ -42,7 +43,8 @@
 
   function boot() {
     lastBreakdown = null;
-    const state = createInitialState(SEED, session.runMods());
+    const unlocks = ['kraftwerk', 'erz_sammler', 'geschuetz', ...deriveUnlocks(session.meta.skillNodes)];
+    const state = createInitialState(SEED, session.runMods(), unlocks);
     const renderer = new Canvas2DRenderer(canvas);
     clock?.stop();
     clock = new GameClock(state, renderer);

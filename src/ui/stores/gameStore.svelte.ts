@@ -15,6 +15,7 @@ export interface UiSnapshot {
   timeS: number;
   currentRound: number;
   highestRoundCleared: number;
+  unlockedBuildings: string[];
   preview: WavePreview;
 }
 
@@ -25,6 +26,7 @@ function emptySnapshot(): UiSnapshot {
     buildings: [], enemies: [], planetHp: 0, planetMaxHp: 0,
     focusEid: null, focusUsed: false, timeS: 0,
     currentRound: 1, highestRoundCleared: 0,
+    unlockedBuildings: [],
     preview: { round: 1, groups: [], totalHp: 0, playerDps: 0, ratio: 0, assessment: 'machbar' },
   };
 }
@@ -47,6 +49,7 @@ class GameStore {
       timeS: state.timeS,
       currentRound: state.currentRound,
       highestRoundCleared: state.highestRoundCleared,
+      unlockedBuildings: [...state.unlockedBuildings],
       preview: previewWave(state),
     };
   }

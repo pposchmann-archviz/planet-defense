@@ -20,10 +20,21 @@
       {@const maxed = level >= node.maxStufe}
       {@const cost = nodeCost(node, level)}
       <div class="node {node.branch}">
-        <div class="name">{node.nameDe} <span class="lvl">{level}/{node.maxStufe}</span></div>
+        <div class="name">
+          {node.nameDe}
+          {#if node.typ === 'unlock'}
+            <span class="lvl">{level >= 1 ? 'freigeschaltet' : 'gesperrt'}</span>
+          {:else}
+            <span class="lvl">{level}/{node.maxStufe}</span>
+          {/if}
+        </div>
         <div class="desc">{node.beschreibung}</div>
         <button disabled={maxed || meta.techPoints < cost} onclick={() => onBuy(id)}>
-          {maxed ? 'Max' : `Kaufen · ${cost} TP`}
+          {#if node.typ === 'unlock'}
+            {maxed ? 'freigeschaltet' : `Freischalten · ${cost} TP`}
+          {:else}
+            {maxed ? 'Max' : `Kaufen · ${cost} TP`}
+          {/if}
         </button>
       </div>
     {/each}
