@@ -37,4 +37,12 @@ export const BALANCE = {
   bossTelegraphS: 1.5,
   bossShieldDurationS: 2.0,
   bossShieldIntervalS: 6.0,
+
+  // --- Meta / Tech-Punkte (M4) ---
+  techBase: 3,
+  techDiv: 2,
+  techExp: 0.7,
+  techBossBonus: 10,
+  techRecordBonus: 5,
+  passiveCostGrowth: 1.6,
 } as const;
