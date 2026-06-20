@@ -71,6 +71,28 @@ describe('tickCombatTurrets', () => {
   });
 });
 
+describe('ballistische Waffe spawnt Projektil statt Sofort-Treffer', () => {
+  it('Artillerie feuert ein Projektil, kein direkter HP-Verlust im selben Tick', () => {
+    const s = combatState();
+    s.buildings.push({ iid: s.nextIid++, defId: 'artillery', level: 1, slot: 0, cooldown: 0 });
+    s.enemies.push({ eid: 1, defId: 'schwarm', hp: 12, maxHp: 12, angle: 0, progress: 0.95, alive: true });
+    tickCombatTurrets(s, 1 / 30);
+    expect(s.projectiles.length).toBeGreaterThan(0); // Projektil gespawnt
+    expect(s.enemies[0].hp).toBe(12); // noch kein Splash (erst bei Ankunft)
+  });
+});
+describe('Laser (Hitscan, energy) trifft sofort', () => {
+  it('Laser macht energy-Schaden ohne Projektil', () => {
+    const s = combatState();
+    s.buildings.push({ iid: s.nextIid++, defId: 'laser', level: 1, slot: 0, cooldown: 0 });
+    s.enemies.push({ eid: 1, defId: 'schild_drohne', hp: 80, maxHp: 80, angle: 0, progress: 0.95, alive: true });
+    tickCombatTurrets(s, 1 / 30);
+    expect(s.projectiles.length).toBe(0); // Hitscan, kein Projektil
+    // energy vs shield 2.0: 9*2.0=18 → hp 62
+    expect(s.enemies[0].hp).toBeCloseTo(62, 4);
+  });
+});
+
 describe('tickCombatTurrets: Boss-Schild', () => {
   it('Schaden wird ignoriert während der Schild-Phase', () => {
     const s = combatState();

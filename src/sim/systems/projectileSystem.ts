@@ -1,9 +1,7 @@
 import type { GameState, Projectile } from '../core/GameState';
 import type { DamageType } from '../../content/types';
-import { getEnemy } from '../../content/enemies';
-import { DAMAGE_MATRIX } from '../../content/damageMatrix';
-import { BALANCE } from '../../content/balance';
 import { pathPosition, dist } from '../core/geometry';
+import { applyDamage } from './damage';
 
 interface ShotSpec { damage: number; damageType: DamageType; level: number; splashRadius: number; speed: number; }
 
@@ -41,19 +39,9 @@ export function tickProjectiles(state: GameState, dt: number): void {
 function explode(state: GameState, p: Projectile): void {
   for (const e of state.enemies) {
     if (!e.alive) continue;
-    if (e.isBoss && e.bossPhase === 'shield') continue; // unverwundbar
     const pos = pathPosition(e.angle, e.progress);
     if (dist({ x: p.x, y: p.y }, pos) > p.splashRadius) continue;
-    const enemyDef = getEnemy(e.defId);
-    const dmg = p.damage
-      * DAMAGE_MATRIX[p.damageType][enemyDef.armor]
-      * Math.pow(BALANCE.towerLevelDamageMult, p.level - 1)
-      * state.meta.turmSchadenMult;
-    e.hp -= dmg;
-    if (e.hp <= 0) {
-      e.alive = false;
-      if (e.isBoss) state.bossesKilledThisRun += 1;
-      state.ore = Math.min(state.oreStorageCap, state.ore + enemyDef.reward);
-    }
+    // applyDamage kapselt Schild-Skip + Matrix×Level×Meta + Kill/Reward.
+    applyDamage(state, e, p.damage, p.damageType, p.level);
   }
 }

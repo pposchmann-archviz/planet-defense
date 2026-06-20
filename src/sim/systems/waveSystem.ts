@@ -3,6 +3,7 @@ import { TERRA1_WAVES } from '../../content/enemies';
 import { BALANCE } from '../../content/balance';
 import { spawnDueEnemies, moveEnemies } from './enemySystem';
 import { tickCombatTurrets } from './combatSystem';
+import { tickProjectiles } from './projectileSystem';
 import { tickBossPhases } from './bossSystem';
 
 export function startWave(state: GameState): boolean {
@@ -40,6 +41,7 @@ export function tickWave(state: GameState, dt: number): void {
   tickBossPhases(state, dt);
   moveEnemies(state, dt);
   tickCombatTurrets(state, dt);
+  tickProjectiles(state, dt);
   state.enemies = state.enemies.filter((e) => e.alive);
 
   // Niederlage zuerst

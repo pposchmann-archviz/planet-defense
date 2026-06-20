@@ -1,9 +1,8 @@
 import type { GameState, BuildingInstance, Enemy } from '../core/GameState';
 import { getBuilding } from '../../content/buildings';
-import { getEnemy } from '../../content/enemies';
-import { DAMAGE_MATRIX } from '../../content/damageMatrix';
-import { BALANCE } from '../../content/balance';
 import { pathPosition, towerPosition, dist } from '../core/geometry';
+import { spawnProjectile } from './projectileSystem';
+import { applyDamage } from './damage';
 
 const EPS = 1e-6;
 
@@ -41,17 +40,19 @@ export function tickCombatTurrets(state: GameState, dt: number): void {
     const effFireRate = (def.fireRate ?? 1) * coverage;
     if (effFireRate <= EPS) { t.cooldown = 0; continue; } // total ausgefallen
     t.cooldown += 1 / effFireRate;
-    // Boss in Schild-Phase ist unverwundbar.
-    if (!(target.isBoss && target.bossPhase === 'shield')) {
-      const enemyDef = getEnemy(target.defId);
-      const levelMult = Math.pow(BALANCE.towerLevelDamageMult, t.level - 1);
-      const dmg = (def.baseDamage ?? 0) * DAMAGE_MATRIX[def.damageType ?? 'kinetic'][enemyDef.armor] * levelMult * state.meta.turmSchadenMult;
-      target.hp -= dmg;
-      if (target.hp <= 0) {
-        target.alive = false;
-        if (target.isBoss) state.bossesKilledThisRun += 1;
-        state.ore = Math.min(state.oreStorageCap, state.ore + enemyDef.reward);
-      }
+    const damageType = def.damageType ?? 'kinetic';
+    if (def.projectileSpeed !== undefined) {
+      // Ballistisch: Projektil spawnen, Einschlag/Splash erst bei Ankunft.
+      spawnProjectile(state, towerPosition(t.slot ?? 0), pathPosition(target.angle, target.progress), {
+        damage: def.baseDamage ?? 0,
+        damageType,
+        level: t.level,
+        splashRadius: def.splashRadius ?? 0,
+        speed: def.projectileSpeed,
+      });
+    } else {
+      // Hitscan: Sofort-Treffer (applyDamage kapselt Schild-Skip + Kill/Reward).
+      applyDamage(state, target, def.baseDamage ?? 0, damageType, t.level);
     }
   }
 }
