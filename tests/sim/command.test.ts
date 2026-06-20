@@ -49,6 +49,14 @@ describe('applyCommand: build', () => {
     expect(r.ok).toBe(false);
     expect(r.reason).toBe('wrongPhase');
   });
+
+  it('lehnt Bau eines unbekannten Gebäudes ab', () => {
+    const s = createInitialState(1);
+    const r = applyCommand(s, { t: 'build', buildingId: 'gibtsnicht' });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toBe('unknownBuilding');
+    expect(s.buildings).toHaveLength(0);
+  });
 });
 
 describe('applyCommand: upgrade', () => {

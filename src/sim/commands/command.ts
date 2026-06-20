@@ -1,5 +1,6 @@
 import type { GameState } from '../core/GameState';
 import { getBuilding } from '../../content/buildings';
+import type { BuildingDef } from '../../content/types';
 import { BALANCE } from '../../content/balance';
 import { nextCost } from '../formulas';
 import { recomputePower } from '../systems/ecoSystem';
@@ -27,7 +28,7 @@ export function applyCommand(state: GameState, cmd: UICommand): CommandResult {
   switch (cmd.t) {
     case 'build': {
       if (state.phase !== 'BUILD') return fail('wrongPhase');
-      let def;
+      let def: BuildingDef;
       try {
         def = getBuilding(cmd.buildingId);
       } catch {
