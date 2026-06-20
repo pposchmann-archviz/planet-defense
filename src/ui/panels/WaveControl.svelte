@@ -37,7 +37,7 @@
   {:else if snap.phase === 'RUN_WON'}
     <div class="overlay won"><strong>Planet geschafft! 🌍</strong><button class="start" onclick={() => onRestart()}>Neu starten</button></div>
   {:else if snap.phase === 'RUN_OVER'}
-    <div class="overlay lost"><strong>Planet verloren — Runde {snap.highestRoundCleared} erreicht</strong><button class="start" onclick={() => onRestart()}>Neu starten</button></div>
+    <div class="overlay lost"><strong>Planet verloren: Runde {snap.highestRoundCleared} erreicht</strong><button class="start" onclick={() => onRestart()}>Neu starten</button></div>
   {/if}
 </div>
 
