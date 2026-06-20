@@ -18,6 +18,7 @@ describe('Golden / Determinismus', () => {
       return hashState(s);
     };
     expect(run(12345)).toBe(run(12345));
+    // Initial-State hängt (noch) nicht vom Seed ab außer im rng-Feld -> Hash unterscheidet sich über rng.s
     expect(run(12345)).not.toBe(run(54321));
   });
 });
