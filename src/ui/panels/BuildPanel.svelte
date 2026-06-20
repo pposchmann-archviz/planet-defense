@@ -1,6 +1,6 @@
 <script lang="ts">
   import { gameStore } from '../stores/gameStore.svelte';
-  import { BUILDINGS, ECO_BUILDING_IDS, getBuilding } from '../../content/buildings';
+  import { BUILDINGS, BUILDABLE_IDS, getBuilding } from '../../content/buildings';
   import { BALANCE } from '../../content/balance';
   import { nextCost } from '../../sim/formulas';
   import { fmt } from '../format';
@@ -25,15 +25,16 @@
 
 <div class="panel">
   <h2>Bauen</h2>
-  {#each ECO_BUILDING_IDS as id (id)}
+  {#each BUILDABLE_IDS as id (id)}
     {@const def = BUILDINGS[id]}
     {@const cost = buildCost(id)}
-    <button class="build" disabled={snap.ore < cost} onclick={() => onCommand({ t: 'build', buildingId: id })}>
+    <button class="build" disabled={snap.ore < cost || snap.phase !== 'BUILD'} onclick={() => onCommand({ t: 'build', buildingId: id })}>
       <span class="name">{def.nameDe}</span>
       <span class="meta">
         {#if def.powerGen > 0}<span class="pwr-plus">+{def.powerGen} Strom</span>{/if}
         {#if def.powerCost > 0}<span class="pwr-minus">−{def.powerCost} Strom</span>{/if}
         {#if def.producesOrePerTick > 0}<span class="ore">+{def.producesOrePerTick} Erz/s</span>{/if}
+        {#if def.category === 'weapon'}<span class="dmg">{def.baseDamage} Schaden · {def.range} Reichw.</span>{/if}
       </span>
       <span class="cost">{fmt(cost)} Erz</span>
     </button>
@@ -47,7 +48,7 @@
       {@const maxed = b.level >= def.maxLevel}
       <div class="owned">
         <span class="name">{def.nameDe} <span class="lvl">Lv {b.level}</span></span>
-        <button class="up" disabled={maxed || snap.ore < uc} onclick={() => onCommand({ t: 'upgrade', iid: b.iid })}>
+        <button class="up" disabled={maxed || snap.ore < uc || snap.phase !== 'BUILD'} onclick={() => onCommand({ t: 'upgrade', iid: b.iid })}>
           {maxed ? 'Max' : `Upgrade · ${fmt(uc)} Erz`}
         </button>
       </div>
@@ -64,6 +65,7 @@
   .name { font-weight: 800; font-size: 14px; }
   .meta { grid-column: 1 / -1; display: flex; gap: 8px; font-size: 11px; font-weight: 700; }
   .pwr-plus { color: #FFC53D; } .pwr-minus { color: #FFB020; } .ore { color: #4DD0C2; }
+  .dmg { color: #FF8A8A; }
   .cost { align-self: center; font-weight: 800; color: #4DD0C2; font-variant-numeric: tabular-nums; }
   .owned { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: #1E2748; border-radius: 8px; }
   .lvl { color: #7FFFE6; font-size: 12px; }

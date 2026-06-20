@@ -1,0 +1,48 @@
+<script lang="ts">
+  import { gameStore } from '../stores/gameStore.svelte';
+  import { fmtInt } from '../format';
+  import type { UICommand } from '../../sim/commands/command';
+
+  let { onCommand, onRestart }: { onCommand: (cmd: UICommand) => void; onRestart: () => void } = $props();
+  const snap = $derived(gameStore.snapshot);
+  const hpFrac = $derived(snap.planetMaxHp > 0 ? snap.planetHp / snap.planetMaxHp : 0);
+  const aliveCount = $derived(snap.enemies.filter((e) => e.alive).length);
+</script>
+
+<div class="wave">
+  <div class="hp">
+    <span class="label">PLANET</span>
+    <div class="track"><div class="fill" class:low={hpFrac <= 0.3} style="width:{Math.max(0, hpFrac) * 100}%"></div></div>
+    <span class="val">{fmtInt(snap.planetHp)} / {fmtInt(snap.planetMaxHp)}</span>
+  </div>
+
+  {#if snap.phase === 'BUILD'}
+    <button class="start" onclick={() => onCommand({ t: 'startWave' })}>Welle starten ▶</button>
+  {:else if snap.phase === 'COMBAT'}
+    <div class="combat-info">
+      <span class="badge">COMBAT</span>
+      <span>{aliveCount} Gegner</span>
+      {#if !snap.focusUsed}<span class="hint">Klick einen Gegner → Fokus</span>{:else}<span class="hint used">Fokus genutzt</span>{/if}
+    </div>
+  {:else if snap.phase === 'RUN_OVER'}
+    <div class="overlay lost">
+      <strong>Planet verloren</strong>
+      <button class="start" onclick={() => onRestart()}>Neu starten</button>
+    </div>
+  {/if}
+</div>
+
+<style>
+  .wave { display: flex; align-items: center; gap: 20px; padding: 12px 18px; background: #141A33; border-radius: 12px; }
+  .hp { display: flex; align-items: center; gap: 10px; }
+  .label { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #9AA6D4; }
+  .track { width: 180px; height: 10px; background: #0B1026; border-radius: 6px; overflow: hidden; }
+  .fill { height: 100%; background: #3DDC84; transition: width 0.2s; }
+  .fill.low { background: #FF4D5E; }
+  .val { font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; color: #F2F5FF; }
+  .start { padding: 10px 18px; background: #4DD0C2; color: #06121f; font-weight: 800; border: none; border-radius: 10px; cursor: pointer; font-size: 15px; }
+  .combat-info { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #F2F5FF; }
+  .badge { background: #FF4D5E; color: #fff; font-weight: 800; padding: 3px 10px; border-radius: 99px; font-size: 11px; }
+  .hint { color: #FFB020; font-size: 12px; } .hint.used { color: #5A6699; }
+  .overlay.lost { display: flex; align-items: center; gap: 14px; color: #FF4D5E; font-size: 16px; }
+</style>
