@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ENEMIES, getEnemy, M2_WAVE, TERRA1_WAVES } from '../../src/content/enemies';
+import { ENEMIES, getEnemy, TERRA1_WAVES } from '../../src/content/enemies';
 import { DAMAGE_MATRIX } from '../../src/content/damageMatrix';
 import { getBuilding } from '../../src/content/buildings';
 
@@ -15,10 +15,6 @@ describe('Gegner-Content', () => {
   });
   it('getEnemy wirft bei unbekannt', () => {
     expect(() => getEnemy('nope')).toThrow();
-  });
-  it('M2-Welle ist nicht leer und referenziert gültige Gegner', () => {
-    expect(M2_WAVE.length).toBeGreaterThan(0);
-    for (const s of M2_WAVE) expect(() => getEnemy(s.enemyId)).not.toThrow();
   });
 });
 

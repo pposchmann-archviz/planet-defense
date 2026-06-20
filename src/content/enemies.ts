@@ -1,4 +1,5 @@
 import type { EnemyDef, EnemyId, WaveSpawn } from './types';
+// M2_WAVE wurde am Ende von M3 zurückgezogen — Wellen kommen jetzt aus TERRA1_WAVES.
 
 export const ENEMIES: Record<EnemyId, EnemyDef> = {
   laeufer: { id: 'laeufer', nameDe: 'Läufer', baseHp: 50, speed: 0.06, armor: 'light', planetDamage: 1, reward: 4, shape: 'circle', colorVar: '#5AB0FF' },
@@ -16,13 +17,6 @@ export function getEnemy(id: string): EnemyDef {
   if (!def) throw new Error(`Unbekannte Gegner-id: ${id}`);
   return def;
 }
-
-// Fixe, deterministische M2-Welle (lehrt: Grundtakt → Schwarm → Tank).
-export const M2_WAVE: WaveSpawn[] = [
-  { enemyId: 'laeufer', count: 6, spacingS: 0.8, startDelayS: 0 },
-  { enemyId: 'schwarm', count: 5, spacingS: 0.35, startDelayS: 6 },
-  { enemyId: 'brocken', count: 1, spacingS: 1, startDelayS: 10 },
-];
 
 // Terra-1: 10 handgesetzte Runden (Geschütz-schaffbar getunt). HP wird zur Laufzeit
 // per enemyHpMul(round) skaliert — hier nur Zusammensetzung/Timing.

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createInitialState } from '../../src/sim/core/GameState';
 import { startWave, tickWave } from '../../src/sim/systems/waveSystem';
-import { M2_WAVE } from '../../src/content/enemies';
+import { TERRA1_WAVES } from '../../src/content/enemies';
 
 describe('startWave', () => {
   it('wechselt von BUILD nach COMBAT und initialisiert die Welle', () => {
@@ -10,7 +10,7 @@ describe('startWave', () => {
     expect(ok).toBe(true);
     expect(s.phase).toBe('COMBAT');
     expect(s.wave.active).toBe(true);
-    expect(s.wave.spawnedPerGroup).toEqual(M2_WAVE.map(() => 0));
+    expect(s.wave.spawnedPerGroup).toEqual(TERRA1_WAVES[s.currentRound - 1].map(() => 0));
     expect(s.focusUsed).toBe(false);
   });
   it('startet nicht außerhalb von BUILD', () => {
@@ -20,23 +20,6 @@ describe('startWave', () => {
 });
 
 describe('tickWave', () => {
-  it('Niederlage: Planet-HP 0 → RUN_OVER', () => {
-    const s = createInitialState(1); startWave(s);
-    s.planet.hp = 0;
-    tickWave(s, 1 / 30);
-    expect(s.phase).toBe('RUN_OVER');
-    expect(s.wave.active).toBe(false);
-  });
-  it('Sieg: alle gespawnt und keine lebenden Gegner → zurück zu BUILD', () => {
-    const s = createInitialState(1); startWave(s);
-    // alle Gruppen als komplett gespawnt markieren, keine lebenden Gegner
-    s.wave.spawnedPerGroup = M2_WAVE.map((g) => g.count);
-    s.wave.elapsedS = 999;
-    s.enemies = [];
-    tickWave(s, 1 / 30);
-    expect(s.phase).toBe('BUILD');
-    expect(s.wave.active).toBe(false);
-  });
   it('läuft weiter solange Gegner leben oder noch nicht alle gespawnt sind', () => {
     const s = createInitialState(1); startWave(s);
     tickWave(s, 1 / 30); // t klein, noch am Spawnen
@@ -51,5 +34,32 @@ describe('tickWave', () => {
     // läuft ab → focusEid wird null
     tickWave(s, 1);
     expect(s.focusEid).toBeNull();
+  });
+});
+
+describe('tickWave: Runden-Fortschritt', () => {
+  it('Wellensieg in Runde < 10 erhöht die Runde und geht zu BUILD', () => {
+    const s = createInitialState(1); startWave(s); // Runde 1
+    s.wave.spawnedPerGroup = TERRA1_WAVES[0].map((g) => g.count);
+    s.wave.elapsedS = 999; s.enemies = [];
+    tickWave(s, 1 / 30);
+    expect(s.phase).toBe('BUILD');
+    expect(s.currentRound).toBe(2);
+    expect(s.highestRoundCleared).toBe(1);
+  });
+  it('Sieg in Runde 10 (Boss-Runde geräumt) → RUN_WON', () => {
+    const s = createInitialState(1);
+    s.currentRound = 10; startWave(s);
+    s.wave.spawnedPerGroup = TERRA1_WAVES[9].map((g) => g.count);
+    s.wave.elapsedS = 999; s.enemies = [];
+    tickWave(s, 1 / 30);
+    expect(s.phase).toBe('RUN_WON');
+    expect(s.highestRoundCleared).toBe(10);
+  });
+  it('Niederlage: Planet-HP 0 → RUN_OVER (jederzeit)', () => {
+    const s = createInitialState(1); startWave(s);
+    s.planet.hp = 0;
+    tickWave(s, 1 / 30);
+    expect(s.phase).toBe('RUN_OVER');
   });
 });

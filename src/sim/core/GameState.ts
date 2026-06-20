@@ -33,7 +33,7 @@ export interface EcoMetaMods { oreMult: number; powerGenMult: number; startOreBo
 export interface WaveState {
   active: boolean;
   elapsedS: number;     // Zeit seit Wellenstart
-  spawnedPerGroup: number[]; // wie viele jeder M2_WAVE-Gruppe schon gespawnt sind
+  spawnedPerGroup: number[]; // wie viele jeder Wellen-Gruppe (TERRA1_WAVES) schon gespawnt sind
 }
 
 export interface GameState {
