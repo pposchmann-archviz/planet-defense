@@ -1,13 +1,12 @@
 import type { GameState } from '../core/GameState';
 import { TERRA1_WAVES, getEnemy } from '../../content/enemies';
-import { enemyHpMul } from '../formulas';
+import { scaledEnemyHp } from '../formulas';
 import { BALANCE } from '../../content/balance';
 
 export function spawnDueEnemies(state: GameState): void {
   const w = state.wave;
   const wave = TERRA1_WAVES[state.currentRound - 1];
   if (!wave) return;
-  const mul = enemyHpMul(state.currentRound);
   for (let g = 0; g < wave.length; g++) {
     const group = wave[g];
     const already = w.spawnedPerGroup[g] ?? 0;
@@ -16,8 +15,7 @@ export function spawnDueEnemies(state: GameState): void {
       const dueAt = group.startDelayS + i * group.spacingS;
       if (w.elapsedS + 1e-9 >= dueAt) {
         const def = getEnemy(group.enemyId);
-        const baseHp = def.isBoss ? def.baseHp * BALANCE.bossHpMult : def.baseHp;
-        const hp = Math.floor(baseHp * mul);
+        const hp = scaledEnemyHp(def, state.currentRound);
         const angle = (state.nextEid * 2.399963) % (Math.PI * 2);
         state.enemies.push({
           eid: state.nextEid++,
