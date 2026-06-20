@@ -12,6 +12,7 @@ export interface SkillNode {
   kostenTp: number; // passiv: Basispreis (Stufe 0->1); unlock: Festpreis
   maxStufe: number;
   effekt?: { stat: PassivStat; stufe1: number; folge: number; modus: 'prozent' | 'flat' };
+  unlocks?: { gebaeudeId: string }; // nur unlock-Knoten: schaltet ein Gebäude frei
 }
 
 // M4: nur Passive (front-geladen). Unlock-Achse folgt in M5.
@@ -21,6 +22,8 @@ export const SKILL_NODES: Record<string, SkillNode> = {
   p_turmschaden: { id: 'p_turmschaden', branch: 'defense', typ: 'passiv', nameDe: 'Munitionsforschung', beschreibung: 'Mehr Turm-Schaden.', kostenTp: 5, maxStufe: 4, effekt: { stat: 'turmSchaden', stufe1: 30, folge: 10, modus: 'prozent' } },
   p_planethp: { id: 'p_planethp', branch: 'survival', typ: 'passiv', nameDe: 'Schildgenerator', beschreibung: 'Mehr Planet-HP.', kostenTp: 6, maxStufe: 3, effekt: { stat: 'planetHp', stufe1: 35, folge: 15, modus: 'prozent' } },
   p_starterz: { id: 'p_starterz', branch: 'survival', typ: 'passiv', nameDe: 'Vorrats-Depot', beschreibung: 'Mehr Start-Erz.', kostenTp: 4, maxStufe: 3, effekt: { stat: 'startErz', stufe1: 50, folge: 50, modus: 'flat' } },
+  u_artillerie: { id: 'u_artillerie', branch: 'defense', typ: 'unlock', nameDe: 'Artilleriegeschütz', beschreibung: 'Schaltet das Artilleriegeschütz frei (Flächenschaden).', kostenTp: 14, maxStufe: 1, unlocks: { gebaeudeId: 'artillery' } },
+  u_laser: { id: 'u_laser', branch: 'defense', typ: 'unlock', nameDe: 'Laser-Emitter', beschreibung: 'Schaltet den Laser-Emitter frei (stark gegen Schilde).', kostenTp: 12, maxStufe: 1, unlocks: { gebaeudeId: 'laser' } },
 };
 
 export const SKILL_NODE_IDS: string[] = Object.keys(SKILL_NODES);

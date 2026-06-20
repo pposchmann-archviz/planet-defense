@@ -1,8 +1,8 @@
-export type BuildingId = 'kraftwerk' | 'erz_sammler' | 'geschuetz';
+export type BuildingId = 'kraftwerk' | 'erz_sammler' | 'geschuetz' | 'artillery' | 'laser';
 export type BuildingCategory = 'eco' | 'weapon';
-export type DamageType = 'kinetic'; // M2: nur kinetic (explosive/energy ab M3)
-export type ArmorType = 'light' | 'heavy'; // M2: shield ab M3
-export type EnemyId = 'laeufer' | 'schwarm' | 'brocken' | 'zitadelle';
+export type DamageType = 'kinetic' | 'explosive' | 'energy';
+export type ArmorType = 'light' | 'heavy' | 'shield';
+export type EnemyId = 'laeufer' | 'schwarm' | 'brocken' | 'zitadelle' | 'schild_drohne';
 
 export interface BuildingDef {
   id: BuildingId;
@@ -19,6 +19,8 @@ export interface BuildingDef {
   fireRate?: number; // Schuss/s
   range?: number; // Sim-Einheiten
   projectileSpeed?: number; // undefined = Hitscan
+  splashRadius?: number; // Flächenschaden-Radius (ballistische Waffen)
+  unlockNode?: string | null; // null = Basis (immer baubar); Skill-Knoten-id = Unlock nötig
 }
 
 export interface EnemyDef {

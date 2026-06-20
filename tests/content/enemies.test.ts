@@ -4,8 +4,8 @@ import { DAMAGE_MATRIX } from '../../src/content/damageMatrix';
 import { getBuilding } from '../../src/content/buildings';
 
 describe('Gegner-Content', () => {
-  it('hat die drei M2-Gegner (plus M3-Boss)', () => {
-    expect(Object.keys(ENEMIES).sort()).toEqual(['brocken', 'laeufer', 'schwarm', 'zitadelle']);
+  it('hat die M2-Gegner (plus M3-Boss + M5-Schild-Drohne)', () => {
+    expect(Object.keys(ENEMIES).sort()).toEqual(['brocken', 'laeufer', 'schild_drohne', 'schwarm', 'zitadelle']);
   });
   it('Brocken ist heavy und zäh, Läufer light', () => {
     expect(getEnemy('brocken').armor).toBe('heavy');
@@ -59,5 +59,18 @@ describe('Geschützturm', () => {
     expect(g.fireRate).toBe(2);
     expect(g.range).toBe(220);
     expect(g.projectileSpeed).toBeUndefined(); // Hitscan
+  });
+});
+
+describe('Schild-Gegner', () => {
+  it('schild_drohne hat shield-Rüstung', () => {
+    expect(getEnemy('schild_drohne').armor).toBe('shield');
+  });
+});
+
+describe('M5-Waffen (Artillerie + Laser)', () => {
+  it('Artillerie hat Splash, Laser ist Hitscan', () => {
+    expect(getBuilding('artillery').splashRadius!).toBeGreaterThan(0);
+    expect(getBuilding('laser').projectileSpeed).toBeUndefined();
   });
 });
