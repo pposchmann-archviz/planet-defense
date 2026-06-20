@@ -45,7 +45,7 @@ export function tickCombatTurrets(state: GameState, dt: number): void {
     if (!(target.isBoss && target.bossPhase === 'shield')) {
       const enemyDef = getEnemy(target.defId);
       const levelMult = Math.pow(BALANCE.towerLevelDamageMult, t.level - 1);
-      const dmg = (def.baseDamage ?? 0) * DAMAGE_MATRIX[def.damageType ?? 'kinetic'][enemyDef.armor] * levelMult;
+      const dmg = (def.baseDamage ?? 0) * DAMAGE_MATRIX[def.damageType ?? 'kinetic'][enemyDef.armor] * levelMult * state.meta.turmSchadenMult;
       target.hp -= dmg;
       if (target.hp <= 0) {
         target.alive = false;

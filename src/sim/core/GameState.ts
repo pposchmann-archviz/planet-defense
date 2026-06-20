@@ -28,7 +28,7 @@ export interface Enemy {
 }
 
 export interface PowerState { gen: number; draw: number; coverage: number; }
-export interface EcoMetaMods { oreMult: number; powerGenMult: number; startOreBonus: number; }
+export interface EcoMetaMods { oreMult: number; powerGenMult: number; startOreBonus: number; turmSchadenMult: number; planetHpMult: number; }
 
 export interface WaveState {
   active: boolean;
@@ -61,8 +61,15 @@ export interface GameState {
   bossesKilledThisRun: number;
 }
 
-export function createInitialState(seed: number): GameState {
-  const meta: EcoMetaMods = { oreMult: 1, powerGenMult: 1, startOreBonus: 0 };
+export function createInitialState(seed: number, mods?: Partial<EcoMetaMods>): GameState {
+  const meta: EcoMetaMods = {
+    oreMult: mods?.oreMult ?? 1,
+    powerGenMult: mods?.powerGenMult ?? 1,
+    startOreBonus: mods?.startOreBonus ?? 0,
+    turmSchadenMult: mods?.turmSchadenMult ?? 1,
+    planetHpMult: mods?.planetHpMult ?? 1,
+  };
+  const planetMaxHp = Math.floor(BALANCE.planetHpBase * meta.planetHpMult);
   return {
     seed,
     rng: createRng(seed),
@@ -75,7 +82,7 @@ export function createInitialState(seed: number): GameState {
     buildings: [],
     nextIid: 1,
     meta,
-    planet: { x: 0, y: 0, hp: BALANCE.planetHpBase, maxHp: BALANCE.planetHpBase, radius: BALANCE.R_PLANET },
+    planet: { x: 0, y: 0, hp: planetMaxHp, maxHp: planetMaxHp, radius: BALANCE.R_PLANET },
     enemies: [],
     nextEid: 1,
     wave: { active: false, elapsedS: 0, spawnedPerGroup: [] },
