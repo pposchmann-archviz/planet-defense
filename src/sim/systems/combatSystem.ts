@@ -14,6 +14,7 @@ export function selectTarget(state: GameState, turret: BuildingInstance): Enemy 
   const tpos = towerPosition(turret.slot ?? 0);
   const inRange = (e: Enemy): boolean => {
     if (!e.alive) return false;
+    if (e.flying && def.canHitAir !== true) return false; // M6: nur Flak trifft Luft
     return dist(tpos, pathPosition(e.angle, e.progress)) <= range;
   };
   if (state.focusEid !== null && state.focusTimerS > 0) {

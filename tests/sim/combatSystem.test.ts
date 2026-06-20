@@ -93,6 +93,24 @@ describe('Laser (Hitscan, energy) trifft sofort', () => {
   });
 });
 
+describe('Air-Targeting', () => {
+  it('Boden-Turm (Geschütz) ignoriert fliegende Gegner', () => {
+    const s = combatState(); addTurret(s, 0);
+    s.enemies.push({ eid:1, defId:'drohne_flug', hp:40, maxHp:40, angle:0, progress:0.95, alive:true, flying:true });
+    s.buildings[0].cooldown = 0;
+    tickCombatTurrets(s, 1/30);
+    expect(s.enemies[0].hp).toBe(40); // kein Treffer
+  });
+  it('Flak trifft fliegende Gegner', () => {
+    const s = combatState();
+    s.buildings.push({ iid:s.nextIid++, defId:'flak', level:1, slot:0, cooldown:0 });
+    s.enemies.push({ eid:1, defId:'drohne_flug', hp:40, maxHp:40, angle:0, progress:0.95, alive:true, flying:true });
+    tickCombatTurrets(s, 1/30);
+    // explosive vs light 1.2: 10*1.2=12 → hp 28
+    expect(s.enemies[0].hp).toBeCloseTo(28, 4);
+  });
+});
+
 describe('Frost-Turm verlangsamt das Ziel', () => {
   it('Frost trifft Läufer und setzt Slow', () => {
     const s = combatState();
