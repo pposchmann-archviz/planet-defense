@@ -1,38 +1,45 @@
 import type { GameState } from '../core/GameState';
-import { M2_WAVE, getEnemy } from '../../content/enemies';
+import { TERRA1_WAVES, getEnemy } from '../../content/enemies';
+import { enemyHpMul } from '../formulas';
+import { BALANCE } from '../../content/balance';
 
-// Spawnt alle Gegner, die laut Schedule bis wave.elapsedS fällig sind.
 export function spawnDueEnemies(state: GameState): void {
   const w = state.wave;
-  for (let g = 0; g < M2_WAVE.length; g++) {
-    const group = M2_WAVE[g];
+  const wave = TERRA1_WAVES[state.currentRound - 1];
+  if (!wave) return;
+  const mul = enemyHpMul(state.currentRound);
+  for (let g = 0; g < wave.length; g++) {
+    const group = wave[g];
     const already = w.spawnedPerGroup[g] ?? 0;
     let count = already;
     for (let i = already; i < group.count; i++) {
       const dueAt = group.startDelayS + i * group.spacingS;
       if (w.elapsedS + 1e-9 >= dueAt) {
         const def = getEnemy(group.enemyId);
-        // Spawn-Winkel deterministisch über goldenen Winkel verteilt (kein RNG nötig).
-        const angle = ((state.nextEid * 2.399963) % (Math.PI * 2));
+        const baseHp = def.isBoss ? def.baseHp * BALANCE.bossHpMult : def.baseHp;
+        const hp = Math.floor(baseHp * mul);
+        const angle = (state.nextEid * 2.399963) % (Math.PI * 2);
         state.enemies.push({
           eid: state.nextEid++,
           defId: def.id,
-          hp: def.baseHp,
-          maxHp: def.baseHp,
+          hp,
+          maxHp: hp,
           angle,
           progress: 0,
           alive: true,
+          ...(def.isBoss
+            ? { isBoss: true, bossPhase: 'vulnerable' as const, bossPhaseTimerS: BALANCE.bossShieldIntervalS }
+            : {}),
         });
         count = i + 1;
       } else {
-        break; // spätere Spawns dieser Gruppe sind noch nicht fällig
+        break;
       }
     }
     w.spawnedPerGroup[g] = count;
   }
 }
 
-// Bewegt lebende Gegner nach innen; Durchbruch bei progress>=1.
 export function moveEnemies(state: GameState, dt: number): void {
   for (const e of state.enemies) {
     if (!e.alive) continue;
