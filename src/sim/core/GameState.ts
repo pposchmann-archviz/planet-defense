@@ -1,6 +1,7 @@
 import { createRng, type RngState } from './rng';
 import { BALANCE } from '../../content/balance';
 import type { BuildingId, EnemyId } from '../../content/types';
+import type { RunMods } from '../meta';
 
 export type RunPhase = 'BUILD' | 'COMBAT' | 'RUN_OVER' | 'RUN_WON';
 
@@ -28,7 +29,8 @@ export interface Enemy {
 }
 
 export interface PowerState { gen: number; draw: number; coverage: number; }
-export interface EcoMetaMods { oreMult: number; powerGenMult: number; startOreBonus: number; turmSchadenMult: number; planetHpMult: number; }
+// Single source of truth: EcoMetaMods == RunMods (meta.ts). meta.ts importiert GameState NICHT → kein Zyklus.
+export type EcoMetaMods = RunMods;
 
 export interface WaveState {
   active: boolean;
