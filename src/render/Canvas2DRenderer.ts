@@ -52,6 +52,14 @@ export class Canvas2DRenderer {
       const sz = (def.shape === 'cluster' ? 5 : def.shape === 'hexagon' ? 11 : 8);
       ctx.beginPath(); ctx.arc(ex, ey, sz, 0, Math.PI * 2); ctx.fill();
       if (focused) { ctx.strokeStyle = PALETTE.focus; ctx.lineWidth = 2; ctx.stroke(); }
+      // Boss-Visual: Telegraph (pulsierender Orange-Ring) / Schild (hellblauer Kreis)
+      if (e.isBoss && e.bossPhase === 'telegraph') {
+        ctx.strokeStyle = '#FFB020'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(ex, ey, sz + 6 + Math.sin(state.timeS * 12) * 2, 0, Math.PI * 2); ctx.stroke();
+      } else if (e.isBoss && e.bossPhase === 'shield') {
+        ctx.strokeStyle = '#5AB0FF'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(ex, ey, sz + 7, 0, Math.PI * 2); ctx.stroke();
+      }
       // Mini-HP-Balken
       if (e.hp < e.maxHp) {
         const w = 16, frac = Math.max(0, e.hp / e.maxHp);
@@ -81,5 +89,12 @@ export class Canvas2DRenderer {
       ctx.arc(cx, cy, BALANCE.R_PLANET * s + 8, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2);
       ctx.stroke();
     }
+
+    // Runden-Anzeige oben links
+    ctx.fillStyle = '#9AA6D4';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Runde ' + state.currentRound, 12, 22);
   }
 }

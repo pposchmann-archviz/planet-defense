@@ -1,4 +1,5 @@
 import type { GameState, BuildingInstance, Enemy, RunPhase } from '../../sim/core/GameState';
+import { previewWave, type WavePreview } from '../../sim/wavePreview';
 
 export interface UiSnapshot {
   phase: RunPhase;
@@ -12,6 +13,9 @@ export interface UiSnapshot {
   focusEid: number | null;
   focusUsed: boolean;
   timeS: number;
+  currentRound: number;
+  highestRoundCleared: number;
+  preview: WavePreview;
 }
 
 function emptySnapshot(): UiSnapshot {
@@ -20,6 +24,8 @@ function emptySnapshot(): UiSnapshot {
     power: { gen: 0, draw: 0, coverage: 1 },
     buildings: [], enemies: [], planetHp: 0, planetMaxHp: 0,
     focusEid: null, focusUsed: false, timeS: 0,
+    currentRound: 1, highestRoundCleared: 0,
+    preview: { round: 1, groups: [], totalHp: 0, playerDps: 0, ratio: 0, assessment: 'machbar' },
   };
 }
 
@@ -39,6 +45,9 @@ class GameStore {
       focusEid: state.focusEid,
       focusUsed: state.focusUsed,
       timeS: state.timeS,
+      currentRound: state.currentRound,
+      highestRoundCleared: state.highestRoundCleared,
+      preview: previewWave(state),
     };
   }
 }
