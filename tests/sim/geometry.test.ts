@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { radiusAt, pathPosition, dist } from '../../src/sim/core/geometry';
+import { radiusAt, pathPosition, dist, towerPosition } from '../../src/sim/core/geometry';
 import { BALANCE } from '../../src/content/balance';
 
 describe('Geometrie', () => {
@@ -15,5 +15,13 @@ describe('Geometrie', () => {
   });
   it('dist ist euklidisch', () => {
     expect(dist({ x: 0, y: 0 }, { x: 3, y: 4 })).toBe(5);
+  });
+  it('towerPosition: Slots gleichmäßig auf dem Turm-Ring', () => {
+    const p0 = towerPosition(0);
+    expect(Math.hypot(p0.x, p0.y)).toBeCloseTo(BALANCE.R_TOWERS, 6); // auf dem Ring
+    expect(p0.x).toBeCloseTo(BALANCE.R_TOWERS, 6); // Slot 0 bei Winkel 0 (+x)
+    const p3 = towerPosition(3); // 3/12 = 90°
+    expect(p3.x).toBeCloseTo(0, 6);
+    expect(p3.y).toBeCloseTo(BALANCE.R_TOWERS, 6);
   });
 });
