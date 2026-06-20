@@ -15,6 +15,7 @@
   import ResourceBar from './ui/panels/ResourceBar.svelte';
   import BuildPanel from './ui/panels/BuildPanel.svelte';
   import WaveControl from './ui/panels/WaveControl.svelte';
+  import SkillTreePanel from './ui/panels/SkillTreePanel.svelte';
 
   let canvas: HTMLCanvasElement;
   let clock: GameClock | undefined;
@@ -31,6 +32,7 @@
     },
   };
   const session = new Session(browserMetaStore);
+  metaStore.push(session.meta);
 
   // Run-Ende-Aufschlüsselung für die Anzeige + Skilltree-Screen-Toggle.
   let lastBreakdown = $state<RunEndBreakdown | null>(null);
@@ -90,23 +92,19 @@
 </script>
 
 <main>
-  <header><ResourceBar /></header>
-  <WaveControl onCommand={handleCommand} onRestart={handleRestart} />
-  <div class="stage">
-    <canvas bind:this={canvas} width="640" height="560" onclick={handleCanvasClick}></canvas>
-    <BuildPanel onCommand={handleCommand} />
-  </div>
-  <!-- Task 6 verdrahtet SkillTreePanel + WaveControl-Breakdown. Wiring (Session/Toggle/Buy) ist bereits aktiv. -->
   {#if showSkilltree}
-    <div class="skilltree-host">
-      Skilltree ({metaStore.snapshot.techPoints} TP)
-      <button onclick={() => buySkill('p_stromcap')}>Netzausbau kaufen</button>
-      <button onclick={() => (showSkilltree = false)}>Schließen</button>
-    </div>
-  {:else if lastBreakdown}
-    <div class="run-end-host">
-      +{lastBreakdown.gained} Tech-Punkte
-      <button onclick={() => (showSkilltree = true)}>Skilltree</button>
+    <SkillTreePanel onBuy={buySkill} onClose={() => (showSkilltree = false)} />
+  {:else}
+    <header><ResourceBar /></header>
+    <WaveControl
+      onCommand={handleCommand}
+      onRestart={handleRestart}
+      onOpenSkilltree={() => (showSkilltree = true)}
+      breakdown={lastBreakdown}
+    />
+    <div class="stage">
+      <canvas bind:this={canvas} width="640" height="560" onclick={handleCanvasClick}></canvas>
+      <BuildPanel onCommand={handleCommand} />
     </div>
   {/if}
 </main>
@@ -116,6 +114,4 @@
   main { max-width: 1040px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
   .stage { display: flex; gap: 16px; align-items: flex-start; }
   canvas { border-radius: 12px; background: #0B1026; flex: 0 0 auto; cursor: crosshair; }
-  .skilltree-host, .run-end-host { background: #141A33; border-radius: 12px; padding: 14px; display: flex; gap: 12px; align-items: center; }
-  .skilltree-host button, .run-end-host button { background: #4DD0C2; color: #06121f; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; cursor: pointer; }
 </style>

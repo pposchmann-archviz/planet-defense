@@ -3,7 +3,8 @@
   import { fmtInt } from '../format';
   import type { UICommand } from '../../sim/commands/command';
 
-  let { onCommand, onRestart }: { onCommand: (cmd: UICommand) => void; onRestart: () => void } = $props();
+  let { onCommand, onRestart, onOpenSkilltree, breakdown }:
+    { onCommand: (c: UICommand) => void; onRestart: () => void; onOpenSkilltree: () => void; breakdown: { basis: number; bossBonus: number; recordBonus: number; gained: number } | null } = $props();
   const snap = $derived(gameStore.snapshot);
   const hpFrac = $derived(snap.planetMaxHp > 0 ? snap.planetHp / snap.planetMaxHp : 0);
   const aliveCount = $derived(snap.enemies.filter((e) => e.alive).length);
@@ -35,9 +36,23 @@
       {#if !snap.focusUsed}<span class="hint">Klick einen Gegner → Fokus</span>{:else}<span class="hint used">Fokus genutzt</span>{/if}
     </div>
   {:else if snap.phase === 'RUN_WON'}
-    <div class="overlay won"><strong>Planet geschafft! 🌍</strong><button class="start" onclick={() => onRestart()}>Neu starten</button></div>
+    <div class="overlay won">
+      <strong>Planet geschafft! 🌍</strong>
+      {#if breakdown}
+        <div class="tp-breakdown">+{breakdown.gained} Tech-Punkte (Basis {breakdown.basis} · Boss {breakdown.bossBonus} · Rekord {breakdown.recordBonus})</div>
+      {/if}
+      <button class="start" onclick={() => onRestart()}>Neu starten</button>
+      <button class="skill" onclick={() => onOpenSkilltree()}>Skilltree</button>
+    </div>
   {:else if snap.phase === 'RUN_OVER'}
-    <div class="overlay lost"><strong>Planet verloren: Runde {snap.highestRoundCleared} erreicht</strong><button class="start" onclick={() => onRestart()}>Neu starten</button></div>
+    <div class="overlay lost">
+      <strong>Planet verloren: Runde {snap.highestRoundCleared} erreicht</strong>
+      {#if breakdown}
+        <div class="tp-breakdown">+{breakdown.gained} Tech-Punkte (Basis {breakdown.basis} · Boss {breakdown.bossBonus} · Rekord {breakdown.recordBonus})</div>
+      {/if}
+      <button class="start" onclick={() => onRestart()}>Neu starten</button>
+      <button class="skill" onclick={() => onOpenSkilltree()}>Skilltree</button>
+    </div>
   {/if}
 </div>
 
@@ -53,8 +68,10 @@
   .combat-info { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #F2F5FF; }
   .badge { background: #FF4D5E; color: #fff; font-weight: 800; padding: 3px 10px; border-radius: 99px; font-size: 11px; }
   .hint { color: #FFB020; font-size: 12px; } .hint.used { color: #5A6699; }
-  .overlay.lost { display: flex; align-items: center; gap: 14px; color: #FF4D5E; font-size: 16px; }
-  .overlay.won { display: flex; align-items: center; gap: 14px; color: #3DDC84; font-size: 16px; }
+  .overlay.lost { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; color: #FF4D5E; font-size: 16px; }
+  .overlay.won { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; color: #3DDC84; font-size: 16px; }
+  .tp-breakdown { color: #FF7A59; font-weight: 800; font-size: 14px; }
+  .skill { padding: 10px 18px; background: #2C3760; color: #F2F5FF; font-weight: 800; border: none; border-radius: 10px; cursor: pointer; font-size: 15px; }
   .build-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .round { font-weight: 800; color: #9AA6D4; }
   .preview { display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; color: #F2F5FF; }
