@@ -22,6 +22,9 @@ export interface Enemy {
   angle: number;     // Spawn-Winkel (radians)
   progress: number;  // 0..1
   alive: boolean;
+  isBoss?: boolean;
+  bossPhase?: 'vulnerable' | 'telegraph' | 'shield';
+  bossPhaseTimerS?: number; // Sekunden bis zum nächsten Phasenwechsel
 }
 
 export interface PowerState { gen: number; draw: number; coverage: number; }
@@ -53,6 +56,9 @@ export interface GameState {
   focusEid: number | null;  // markiertes Ziel
   focusTimerS: number;      // verbleibende Fokus-Zeit
   focusUsed: boolean;       // 1×/Welle
+  currentRound: number;        // 1-basiert
+  highestRoundCleared: number;
+  bossesKilledThisRun: number;
 }
 
 export function createInitialState(seed: number): GameState {
@@ -76,5 +82,8 @@ export function createInitialState(seed: number): GameState {
     focusEid: null,
     focusTimerS: 0,
     focusUsed: false,
+    currentRound: 1,
+    highestRoundCleared: 0,
+    bossesKilledThisRun: 0,
   };
 }
