@@ -103,3 +103,62 @@ describe('applyCommand: Invarianten', () => {
     expect(s.power).toEqual(before);
   });
 });
+
+describe('applyCommand: weapon build (Slot-Zuweisung)', () => {
+  it('baut ein Geschütz und weist Slot 0 zu, mit cooldown 0', () => {
+    const s = createInitialState(1); s.ore = 1000;
+    const r = applyCommand(s, { t: 'build', buildingId: 'geschuetz' });
+    expect(r.ok).toBe(true);
+    const turret = s.buildings.find((b) => b.defId === 'geschuetz')!;
+    expect(turret.slot).toBe(0);
+    expect(turret.cooldown).toBe(0);
+  });
+  it('weist aufeinanderfolgende Slots zu', () => {
+    const s = createInitialState(1); s.ore = 1000;
+    applyCommand(s, { t: 'build', buildingId: 'geschuetz' });
+    applyCommand(s, { t: 'build', buildingId: 'geschuetz' });
+    const slots = s.buildings.filter((b) => b.defId === 'geschuetz').map((b) => b.slot);
+    expect(slots).toEqual([0, 1]);
+  });
+  it('Eco-Gebäude bekommen keinen Slot', () => {
+    const s = createInitialState(1); s.ore = 1000;
+    applyCommand(s, { t: 'build', buildingId: 'kraftwerk' });
+    expect(s.buildings[0].slot).toBeUndefined();
+  });
+});
+
+describe('applyCommand: startWave', () => {
+  it('startet die Welle aus BUILD', () => {
+    const s = createInitialState(1);
+    const r = applyCommand(s, { t: 'startWave' });
+    expect(r.ok).toBe(true);
+    expect(s.phase).toBe('COMBAT');
+  });
+  it('lehnt startWave außerhalb BUILD ab', () => {
+    const s = createInitialState(1); s.phase = 'COMBAT';
+    const r = applyCommand(s, { t: 'startWave' });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toBe('wrongPhase');
+  });
+});
+
+describe('applyCommand: focusMark', () => {
+  it('markiert ein Ziel einmal pro Welle', () => {
+    const s = createInitialState(1); s.phase = 'COMBAT'; s.wave.active = true;
+    s.enemies.push({ eid: 7, defId: 'laeufer', hp: 50, maxHp: 50, angle: 0, progress: 0.5, alive: true });
+    const r = applyCommand(s, { t: 'focusMark', eid: 7 });
+    expect(r.ok).toBe(true);
+    expect(s.focusEid).toBe(7);
+    expect(s.focusUsed).toBe(true);
+    // zweiter Versuch in derselben Welle scheitert
+    const r2 = applyCommand(s, { t: 'focusMark', eid: 7 });
+    expect(r2.ok).toBe(false);
+    expect(r2.reason).toBe('focusUsed');
+  });
+  it('lehnt focusMark außerhalb COMBAT ab', () => {
+    const s = createInitialState(1);
+    const r = applyCommand(s, { t: 'focusMark', eid: 1 });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toBe('wrongPhase');
+  });
+});
