@@ -96,7 +96,8 @@ dist
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
@@ -143,12 +144,13 @@ export default { preprocess: vitePreprocess() };
 
 `vite.config.ts`:
 ```ts
-/// <reference types="vitest/config" />
 import { defineConfig } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 
+// `as any[]` überbrückt den Vite-5/6-Typkonflikt (vitest bündelt Vite-5-Typen,
+// svelte() ist gegen Vite 6 typisiert). Laufzeit unverändert; `npm run typecheck` bleibt grün.
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [svelte()] as any[],
   test: {
     environment: 'node',
     include: ['tests/**/*.test.ts'],
