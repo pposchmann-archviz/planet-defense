@@ -11,19 +11,19 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   },
   geschuetz: {
     id: 'geschuetz', nameDe: 'Geschützturm', category: 'weapon',
-    baseCost: 80, powerGen: 0, powerCost: 8, producesOrePerTick: 0, maxLevel: 8,
+    baseCost: 80, powerGen: 0, powerCost: 8, maxLevel: 8,
     damageType: 'kinetic', baseDamage: 6, fireRate: 2, range: 220, // projectileSpeed undefined = Hitscan
     unlockNode: null, // Basis, immer da
   },
   artillery: {
     id: 'artillery', nameDe: 'Artilleriegeschütz', category: 'weapon',
-    baseCost: 130, powerGen: 0, powerCost: 14, producesOrePerTick: 0, maxLevel: 8,
+    baseCost: 130, powerGen: 0, powerCost: 14, maxLevel: 8,
     damageType: 'explosive', baseDamage: 18, fireRate: 0.6, range: 200, splashRadius: 60, projectileSpeed: 500,
     unlockNode: 'u_artillerie',
   },
   laser: {
     id: 'laser', nameDe: 'Laser-Emitter', category: 'weapon',
-    baseCost: 150, powerGen: 0, powerCost: 12, producesOrePerTick: 0, maxLevel: 8,
+    baseCost: 150, powerGen: 0, powerCost: 12, maxLevel: 8,
     damageType: 'energy', baseDamage: 9, fireRate: 1.5, range: 200,
     unlockNode: 'u_laser', // projectileSpeed undefined = Hitscan
   },

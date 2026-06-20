@@ -9,7 +9,8 @@ const EPS = 1e-6;
 // Zielwahl: Fokus-Mark (falls aktiv + in Reichweite) sonst 'first' (höchster progress in Reichweite).
 export function selectTarget(state: GameState, turret: BuildingInstance): Enemy | null {
   const def = getBuilding(turret.defId);
-  const range = def.range ?? 0;
+  if (def.category !== 'weapon') return null;
+  const range = def.range;
   const tpos = towerPosition(turret.slot ?? 0);
   const inRange = (e: Enemy): boolean => {
     if (!e.alive) return false;
@@ -37,14 +38,14 @@ export function tickCombatTurrets(state: GameState, dt: number): void {
     if (t.cooldown > 0) continue;
     const target = selectTarget(state, t);
     if (!target) { t.cooldown = 0; continue; }
-    const effFireRate = (def.fireRate ?? 1) * coverage;
+    const effFireRate = def.fireRate * coverage;
     if (effFireRate <= EPS) { t.cooldown = 0; continue; } // total ausgefallen
     t.cooldown += 1 / effFireRate;
-    const damageType = def.damageType ?? 'kinetic';
+    const damageType = def.damageType;
     if (def.projectileSpeed !== undefined) {
       // Ballistisch: Projektil spawnen, Einschlag/Splash erst bei Ankunft.
       spawnProjectile(state, towerPosition(t.slot ?? 0), pathPosition(target.angle, target.progress), {
-        damage: def.baseDamage ?? 0,
+        damage: def.baseDamage,
         damageType,
         level: t.level,
         splashRadius: def.splashRadius ?? 0,
@@ -52,7 +53,7 @@ export function tickCombatTurrets(state: GameState, dt: number): void {
       });
     } else {
       // Hitscan: Sofort-Treffer (applyDamage kapselt Schild-Skip + Kill/Reward).
-      applyDamage(state, target, def.baseDamage ?? 0, damageType, t.level);
+      applyDamage(state, target, def.baseDamage, damageType, t.level);
     }
   }
 }

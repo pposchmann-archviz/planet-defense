@@ -34,7 +34,7 @@
       <span class="meta">
         {#if def.powerGen > 0}<span class="pwr-plus">+{def.powerGen} Strom</span>{/if}
         {#if def.powerCost > 0}<span class="pwr-minus">−{def.powerCost} Strom</span>{/if}
-        {#if def.producesOrePerTick > 0}<span class="ore">+{def.producesOrePerTick} Erz/s</span>{/if}
+        {#if def.category === 'eco' && def.producesOrePerTick > 0}<span class="ore">+{def.producesOrePerTick} Erz/s</span>{/if}
         {#if def.category === 'weapon'}<span class="dmg">{def.baseDamage} Schaden · {def.range} Reichw.</span>{/if}
       </span>
       {#if locked}

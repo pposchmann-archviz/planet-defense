@@ -54,6 +54,7 @@ describe('Geschützturm', () => {
   it('ist ein weapon-Gebäude mit kinetic-Hitscan', () => {
     const g = getBuilding('geschuetz');
     expect(g.category).toBe('weapon');
+    if (g.category !== 'weapon') throw new Error('geschuetz ist weapon');
     expect(g.damageType).toBe('kinetic');
     expect(g.baseDamage).toBe(6);
     expect(g.fireRate).toBe(2);
@@ -70,7 +71,11 @@ describe('Schild-Gegner', () => {
 
 describe('M5-Waffen (Artillerie + Laser)', () => {
   it('Artillerie hat Splash, Laser ist Hitscan', () => {
-    expect(getBuilding('artillery').splashRadius!).toBeGreaterThan(0);
-    expect(getBuilding('laser').projectileSpeed).toBeUndefined();
+    const art = getBuilding('artillery');
+    if (art.category !== 'weapon') throw new Error('artillery ist weapon');
+    expect(art.splashRadius!).toBeGreaterThan(0);
+    const las = getBuilding('laser');
+    if (las.category !== 'weapon') throw new Error('laser ist weapon');
+    expect(las.projectileSpeed).toBeUndefined();
   });
 });

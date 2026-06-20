@@ -4,24 +4,32 @@ export type DamageType = 'kinetic' | 'explosive' | 'energy';
 export type ArmorType = 'light' | 'heavy' | 'shield';
 export type EnemyId = 'laeufer' | 'schwarm' | 'brocken' | 'zitadelle' | 'schild_drohne';
 
-export interface BuildingDef {
+export interface BuildingBase {
   id: BuildingId;
   nameDe: string;
-  category: BuildingCategory;
   baseCost: number;
-  powerGen: number;
-  powerCost: number;
-  producesOrePerTick: number;
+  powerGen: number;   // 0 außer Kraftwerk
+  powerCost: number;  // 0 außer Verbraucher
   maxLevel: number;
-  // weapon-only (undefined für eco):
-  damageType?: DamageType;
-  baseDamage?: number;
-  fireRate?: number; // Schuss/s
-  range?: number; // Sim-Einheiten
-  projectileSpeed?: number; // undefined = Hitscan
-  splashRadius?: number; // Flächenschaden-Radius (ballistische Waffen)
   unlockNode?: string | null; // null = Basis (immer baubar); Skill-Knoten-id = Unlock nötig
 }
+export interface EcoBuildingDef extends BuildingBase {
+  category: 'eco';
+  producesOrePerTick: number;
+}
+export interface WeaponDef extends BuildingBase {
+  category: 'weapon';
+  damageType: DamageType;
+  baseDamage: number;
+  fireRate: number; // Schuss/s
+  range: number; // Sim-Einheiten
+  splashRadius?: number; // Flächenschaden-Radius (ballistische Waffen)
+  projectileSpeed?: number; // undefined = Hitscan
+  canHitAir?: boolean;   // M6: Flak
+  slowMult?: number;     // M6: Frost (z.B. 0.5)
+  slowDurationS?: number;// M6: Frost
+}
+export type BuildingDef = EcoBuildingDef | WeaponDef;
 
 export interface EnemyDef {
   id: EnemyId;

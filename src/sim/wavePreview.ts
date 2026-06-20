@@ -30,7 +30,7 @@ export function previewWave(state: GameState): WavePreview {
     const def = getBuilding(b.defId);
     if (def.category !== 'weapon') continue;
     const levelMult = Math.pow(BALANCE.towerLevelDamageMult, b.level - 1);
-    playerDps += (def.baseDamage ?? 0) * (def.fireRate ?? 0) * levelMult * state.power.coverage;
+    playerDps += def.baseDamage * def.fireRate * levelMult * state.power.coverage;
   }
   // Referenz: schaffe ich totalHp in ~20 s? ratio>1 = leicht.
   const REF_S = 20;

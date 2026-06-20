@@ -10,6 +10,8 @@ describe('Gebäude-Registry', () => {
     const k = getBuilding('kraftwerk');
     expect(k.powerGen).toBe(20);
     expect(k.powerCost).toBe(0);
+    expect(k.category).toBe('eco');
+    if (k.category !== 'eco') throw new Error('kraftwerk ist eco');
     expect(k.producesOrePerTick).toBe(0);
   });
 
@@ -17,6 +19,8 @@ describe('Gebäude-Registry', () => {
     const s = getBuilding('erz_sammler');
     expect(s.powerGen).toBe(0);
     expect(s.powerCost).toBe(4);
+    expect(s.category).toBe('eco');
+    if (s.category !== 'eco') throw new Error('erz_sammler ist eco');
     expect(s.producesOrePerTick).toBe(2);
   });
 

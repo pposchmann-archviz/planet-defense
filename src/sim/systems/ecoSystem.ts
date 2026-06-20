@@ -24,6 +24,7 @@ export function tickEconomy(state: GameState, dt: number): void {
   let orePerSec = 0;
   for (const b of state.buildings) {
     const def = getBuilding(b.defId);
+    if (def.category !== 'eco') continue;
     orePerSec += def.producesOrePerTick * b.level;
   }
   orePerSec *= state.power.coverage * state.meta.oreMult;
