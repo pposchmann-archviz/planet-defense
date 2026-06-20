@@ -17,18 +17,27 @@
   </div>
 
   {#if snap.phase === 'BUILD'}
-    <button class="start" onclick={() => onCommand({ t: 'startWave' })}>Welle starten ▶</button>
+    <div class="build-row">
+      <span class="round">Runde {snap.currentRound} / 10</span>
+      <div class="preview">
+        {#each snap.preview.groups as g (g.enemyId)}
+          <span class="grp" class:boss={g.isBoss}>{g.count}× {g.nameDe}</span>
+        {/each}
+      </div>
+      <span class="assess {snap.preview.assessment}">{snap.preview.assessment}</span>
+      <button class="start" onclick={() => onCommand({ t: 'startWave' })}>Welle starten ▶</button>
+    </div>
   {:else if snap.phase === 'COMBAT'}
     <div class="combat-info">
+      <span class="round">Runde {snap.currentRound}</span>
       <span class="badge">COMBAT</span>
       <span>{aliveCount} Gegner</span>
       {#if !snap.focusUsed}<span class="hint">Klick einen Gegner → Fokus</span>{:else}<span class="hint used">Fokus genutzt</span>{/if}
     </div>
+  {:else if snap.phase === 'RUN_WON'}
+    <div class="overlay won"><strong>Planet geschafft! 🌍</strong><button class="start" onclick={() => onRestart()}>Neu starten</button></div>
   {:else if snap.phase === 'RUN_OVER'}
-    <div class="overlay lost">
-      <strong>Planet verloren</strong>
-      <button class="start" onclick={() => onRestart()}>Neu starten</button>
-    </div>
+    <div class="overlay lost"><strong>Planet verloren — Runde {snap.highestRoundCleared} erreicht</strong><button class="start" onclick={() => onRestart()}>Neu starten</button></div>
   {/if}
 </div>
 
@@ -45,4 +54,13 @@
   .badge { background: #FF4D5E; color: #fff; font-weight: 800; padding: 3px 10px; border-radius: 99px; font-size: 11px; }
   .hint { color: #FFB020; font-size: 12px; } .hint.used { color: #5A6699; }
   .overlay.lost { display: flex; align-items: center; gap: 14px; color: #FF4D5E; font-size: 16px; }
+  .overlay.won { display: flex; align-items: center; gap: 14px; color: #3DDC84; font-size: 16px; }
+  .build-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .round { font-weight: 800; color: #9AA6D4; }
+  .preview { display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; color: #F2F5FF; }
+  .grp.boss { color: #FF4D5E; font-weight: 800; }
+  .assess { padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; }
+  .assess.leicht { background: #1d3a2a; color: #3DDC84; }
+  .assess.machbar { background: #3a3320; color: #FFB020; }
+  .assess.hart { background: #3a1820; color: #FF4D5E; }
 </style>
