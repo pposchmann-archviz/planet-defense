@@ -26,9 +26,11 @@ export class GameClock {
 
   // Für sofortiges UI-Feedback (z.B. Button-Disable) kann die UI auch direkt prüfen –
   // hier die maßgebliche Anwendung im Loop.
-  private drainCommands(): void {
+  private drainCommands(): boolean {
+    if (this.queue.length === 0) return false;
     for (const cmd of this.queue) applyCommand(this.state, cmd);
     this.queue.length = 0;
+    return true;
   }
 
   start(): void {
@@ -49,7 +51,7 @@ export class GameClock {
     const dt = Math.min((now - this.last) / 1000, MAX_STEPS * ECO_STEP);
     this.last = now;
 
-    this.drainCommands();
+    const applied = this.drainCommands();
 
     this.accEco += dt;
     let n = 0;
@@ -60,7 +62,7 @@ export class GameClock {
 
     this.renderer.draw(this.state);
 
-    if (now - this.lastSnap >= 1000 / SNAPSHOT_HZ) {
+    if (applied || now - this.lastSnap >= 1000 / SNAPSHOT_HZ) {
       gameStore.push(this.state);
       this.lastSnap = now;
     }
