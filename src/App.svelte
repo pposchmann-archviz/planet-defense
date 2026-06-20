@@ -4,32 +4,40 @@
   import { Canvas2DRenderer } from './render/Canvas2DRenderer';
   import { GameClock } from './app/GameClock';
   import { readSave } from './persistence/storage';
+  import type { UICommand } from './sim/commands/command';
+  import ResourceBar from './ui/panels/ResourceBar.svelte';
+  import BuildPanel from './ui/panels/BuildPanel.svelte';
 
   let canvas: HTMLCanvasElement;
+  let clock: GameClock | undefined;
+
+  function handleCommand(cmd: UICommand) {
+    clock?.enqueue(cmd);
+  }
 
   onMount(() => {
-    const save = readSave(); // Save-Stub exerzieren (M0: nur Boot-Check)
+    const save = readSave();
     console.log('[boot] Save geladen, schemaVersion', save.schemaVersion);
 
     const state = createInitialState(12345);
     const renderer = new Canvas2DRenderer(canvas);
-    const clock = new GameClock(state, renderer);
+    clock = new GameClock(state, renderer);
     clock.start();
-    return () => clock.stop();
+    return () => clock?.stop();
   });
 </script>
 
-<canvas bind:this={canvas} width="800" height="600"></canvas>
+<main>
+  <header><ResourceBar /></header>
+  <div class="stage">
+    <canvas bind:this={canvas} width="640" height="520"></canvas>
+    <BuildPanel onCommand={handleCommand} />
+  </div>
+</main>
 
 <style>
-  :global(body) {
-    margin: 0;
-    background: #0b1026;
-    display: grid;
-    place-items: center;
-    height: 100vh;
-  }
-  canvas {
-    border-radius: 12px;
-  }
+  :global(body) { margin: 0; background: #0b1026; color: #F2F5FF; font-family: 'Nunito Sans', system-ui, sans-serif; }
+  main { max-width: 1000px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .stage { display: flex; gap: 16px; align-items: flex-start; }
+  canvas { border-radius: 12px; background: #0B1026; flex: 0 0 auto; }
 </style>
