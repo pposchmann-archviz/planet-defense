@@ -41,10 +41,17 @@ export function tickCombatTurrets(state: GameState, dt: number): void {
     const effFireRate = (def.fireRate ?? 1) * coverage;
     if (effFireRate <= EPS) { t.cooldown = 0; continue; } // total ausgefallen
     t.cooldown += 1 / effFireRate;
-    const enemyDef = getEnemy(target.defId);
-    const levelMult = Math.pow(BALANCE.towerLevelDamageMult, t.level - 1);
-    const dmg = (def.baseDamage ?? 0) * DAMAGE_MATRIX[def.damageType ?? 'kinetic'][enemyDef.armor] * levelMult;
-    target.hp -= dmg;
-    if (target.hp <= 0) { target.alive = false; state.ore = Math.min(state.oreStorageCap, state.ore + enemyDef.reward); }
+    // Boss in Schild-Phase ist unverwundbar.
+    if (!(target.isBoss && target.bossPhase === 'shield')) {
+      const enemyDef = getEnemy(target.defId);
+      const levelMult = Math.pow(BALANCE.towerLevelDamageMult, t.level - 1);
+      const dmg = (def.baseDamage ?? 0) * DAMAGE_MATRIX[def.damageType ?? 'kinetic'][enemyDef.armor] * levelMult;
+      target.hp -= dmg;
+      if (target.hp <= 0) {
+        target.alive = false;
+        if (target.isBoss) state.bossesKilledThisRun += 1;
+        state.ore = Math.min(state.oreStorageCap, state.ore + enemyDef.reward);
+      }
+    }
   }
 }

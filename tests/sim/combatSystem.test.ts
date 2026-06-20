@@ -70,3 +70,23 @@ describe('tickCombatTurrets', () => {
     expect(s.enemies[0].hp).toBe(50);
   });
 });
+
+describe('tickCombatTurrets: Boss-Schild', () => {
+  it('Schaden wird ignoriert während der Schild-Phase', () => {
+    const s = combatState();
+    addTurret(s, 0);
+    s.enemies.push({ eid: 9, defId: 'zitadelle', hp: 1000, maxHp: 1000, angle: 0, progress: 0.95, alive: true, isBoss: true, bossPhase: 'shield', bossPhaseTimerS: 1 });
+    s.buildings[0].cooldown = 0;
+    tickCombatTurrets(s, 1 / 30);
+    expect(s.enemies.find((e) => e.eid === 9)!.hp).toBe(1000); // kein Schaden
+  });
+  it('Schaden wirkt wenn Boss verwundbar', () => {
+    const s = combatState();
+    addTurret(s, 0);
+    s.enemies.push({ eid: 9, defId: 'zitadelle', hp: 1000, maxHp: 1000, angle: 0, progress: 0.95, alive: true, isBoss: true, bossPhase: 'vulnerable', bossPhaseTimerS: 1 });
+    s.buildings[0].cooldown = 0;
+    tickCombatTurrets(s, 1 / 30);
+    // kinetic vs heavy 0.6: 6*0.6=3.6 → hp 996.4
+    expect(s.enemies.find((e) => e.eid === 9)!.hp).toBeCloseTo(996.4, 4);
+  });
+});
